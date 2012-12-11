@@ -13,14 +13,13 @@ function Tile(image, name)
     this.image          = new Image();
     this.image.src      = image;
     this.image.onload   = this.imageOnload;
-
 }
 
 /*
  *  Tile methods
  */
 
-Tile.prototype.imageOnload = imageOnload;
+Tile.prototype.imageOnload = function() {};
 Tile.prototype.setPosition = function(x, y) {
         // If Tiles can be moved at some point, first remove from grid
         
@@ -46,10 +45,11 @@ Tile.prototype.setPixelPosition = function(x, y) {
 };
 Tile.prototype.animate = function() {};
 Tile.prototype.draw = function(context, xOffset, yOffset) {
-    context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
+    // Only draw if the image is on screen
+    if (this.x + this.width > xOffset
+        && this.y + this.height > yOffset
+        && this.x < xOffset + xCanvasSize
+        && this.y < yOffset + yCanvasSize) {
+        context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
+    }
 };
-    
-// Nothing needs to be done here as drawing is done in the main loop    
-function imageOnload() {
-    //console.log("image loaded");
-}

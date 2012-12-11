@@ -1,6 +1,12 @@
 var mouseDown = false;
 var xMouseStart = 0.0;
 var yMouseStart = 0.0;
+var xMousePrevious = 0.0;
+var yMousePrevious = 0.0;
+var xMouse      = 0.0;
+var yMouse      = 0.0;
+
+var mouseRefresh = true;
 
 // Mouse position calculation
 function currentCanvasXOffset() {
@@ -50,7 +56,7 @@ document.getElementById("game").onmousedown = function(e) {
         var object = objects[i];
         
         // Remove object if clicked on it
-        if (object.exists && object.containsPoint(x,y)) {
+        if (object.exists && object.containsPoint(x + xOffset,y + yOffset)) {
             clickedObject = object;
         }
     }    
@@ -60,13 +66,17 @@ document.getElementById("game").onmousedown = function(e) {
     // Set previous mouse position
     xMouseStart = x;
     yMouseStart = y;
+    
+    xMousePrevious = x;
+    yMousePrevious = y;
+    
 }
 
 document.getElementById("game").onmouseup = function(e) {
 	var x = currentMouseXPosition(e) - currentCanvasXOffset();
 	var y = currentMouseYPosition(e) - currentCanvasYOffset();
 	
-    if (clickedObject != null && clickedObject.containsPoint(x,y)) {
+    if (clickedObject != null && clickedObject.containsPoint(x + xOffset,y + yOffset)) {
         clickedObject.exists = false;
     }
 }
@@ -77,28 +87,38 @@ document.onmouseup = function(e) {
 }
 
 document.onmousemove = function(e) {
-    // Scroll game area with mouse
-    if (mouseDown) {
-	    var x = currentMouseXPosition(e) - currentCanvasXOffset();
-	    var y = currentMouseYPosition(e) - currentCanvasYOffset();
-	    
-        xOffset += xMouseStart - x;
-        yOffset += yMouseStart - y;
+    if (mouseRefresh) {
+        var x = currentMouseXPosition(e) - currentCanvasXOffset();
+        var y = currentMouseYPosition(e) - currentCanvasYOffset();
+    
+        // Scroll game area with mouse
+        if (mouseDown) {
+            
+            xOffset += xMousePrevious - x;
+            yOffset += yMousePrevious - y;
+            
+            // Constrains
+            if (xOffset <= 0) {xOffset = 0; borders[0] = true;}
+            else {borders[0] = false;}
+            if (xOffset >= xAreaSize * tileSize - xCanvasSize) {xOffset = xAreaSize * tileSize - xCanvasSize; borders[2] = true;}
+            else {borders[2] = false;}
+            if (yOffset <= 0) {yOffset = 0; borders[1] = true;}
+            else {borders[1] = false;}
+            if (yOffset >= yAreaSize * tileSize - yCanvasSize) {yOffset = yAreaSize * tileSize - yCanvasSize; borders[3] = true;}
+            else {borders[3] = false;}
         
-        // Constrains
-        if (xOffset <= 0) {xOffset = 0; borders[0] = true;}
-        else {borders[0] = false;}
-        if (xOffset >= xAreaSize * tileSize - xCanvasSize) {xOffset = xAreaSize * tileSize - xCanvasSize; borders[2] = true;}
-        else {borders[2] = false;}
-        if (yOffset <= 0) {yOffset = 0; borders[1] = true;}
-        else {borders[1] = false;}
-        if (yOffset >= yAreaSize * tileSize - yCanvasSize) {yOffset = yAreaSize * tileSize - yCanvasSize; borders[3] = true;}
-        else {borders[3] = false;}
-    
-        if (!borders[0] && !borders[2]) {xMouseStart = x;}
-        if (!borders[1] && !borders[3]) {yMouseStart = y;}
-    
-        //console.log("x off: " + xOffset + ", y off: " + yOffset);
+            if (!borders[0] && !borders[2]) {xMousePrevious = x;}
+            if (!borders[1] && !borders[3]) {yMousePrevious = y;}
+        
+            //console.log("x off: " + xOffset + ", y off: " + yOffset);
+        }
+        
+        // Get mouse position on game area
+        xMouse = xOffset + x;
+        yMouse = yOffset + y;
+        
+        mouseRefresh = false;
     }
+    //draw();
 }
 
