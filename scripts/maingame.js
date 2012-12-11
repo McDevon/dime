@@ -18,10 +18,23 @@ var xOffset     = 0.0;
 var yOffset     = 0.0;
 var borders     = [false, false, false, false]; // Stoppers for left, up, right, down.
 
+// Different tile areas
+    //  TileType (image, name, buildable, passability, berries, shrooms, spawner, spawnerRate, incidence)
+    //  UnitType (name, hp, speed, attack, defence, enemy)
+var tileTypes = [
+    new TileType("images/land2.png", "grass", true, 100, 0, 0, false, 0, 80),
+    new TileType("images/land2.png", "plains", true, 90, 0, 0, false, 0, 60),
+    new TileType("images/land1.png", "mountain", false, 20, 0, 0, false, 30),
+    new TileType("images/land1.png", "mushroom forest", false, 60, 0, 10, false, 20),
+    new TileType("images/land1.png", "berry forest", false, 60, 10, 0, false, 20),
+    new TileType("images/land2.png", "bear forest", false, 60, 5, 0, new UnitType("bear", 100, 0.3, 10, 5, true), 10),
+    ];
+
 // Wait for loading to finish, then let's go
 jQuery(document).ready(function() {
     resetGame();
-    setInterval(mainLoop, refreshRate * 1000);
+    mainLoop();
+    //setInterval(mainLoop, refreshRate * 1000);
     draw();
 });
 
@@ -40,8 +53,8 @@ function resetGame() {
     
     // Reset game state
     gameTime    = 0.0;
-    xOffset     = 0.0;
-    yOffset     = 0.0;
+    xOffset     = (tileSize * xAreaSize) / 2 - (xCanvasSize / 2);
+    yOffset     = (tileSize * yAreaSize) / 2 - (yCanvasSize / 2);
     borders     = [false, false, false, false];
     
     // Objects
@@ -75,10 +88,11 @@ var clickedObject = null;
 
 function mainLoop() {
     gameTime += refreshRate;
-    
     mouseRefresh = true;
-    
     draw();
+    
+    // Recall mainLoop after refreshRate seconds
+    setTimeout(mainLoop, 1000 * refreshRate);
 }
 
 function draw() {

@@ -1,3 +1,16 @@
+// TileType "class"
+function TileType(image, name, buildable, passability, berries, shrooms, spawner, spawnerRate, incidence)
+{
+    // constructor values
+    this.image          = image;
+    this.name           = name;
+    this.buildable      = buildable;
+    this.berries        = berries;
+    this.shrooms        = shrooms;
+    this.spawner        = spawner;
+    this.spawnerRate    = spawnerRate;
+}
+
 // Tile "class"
 function Tile(image, name)
 {
@@ -5,10 +18,10 @@ function Tile(image, name)
     this.x              = 0.0;
     this.y              = 0.0;
     this.exists         = true;     // Switch this to false to destroy object
-    
-    // Set values from constructor
     this.width          = tileSize;
     this.height         = tileSize;
+    
+    // Set values from constructor
     this.name           = name;
     this.image          = new Image();
     this.image.src      = image;
