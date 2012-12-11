@@ -76,8 +76,15 @@ document.getElementById("game").onmouseup = function(e) {
 	var x = currentMouseXPosition(e) - currentCanvasXOffset();
 	var y = currentMouseYPosition(e) - currentCanvasYOffset();
 	
-    if (clickedObject != null && clickedObject.containsPoint(x + xOffset,y + yOffset)) {
-        clickedObject.exists = false;
+	// Separate clicks from drags
+    if (Math.abs(x - xMouseStart) < 5
+        && Math.abs(y - yMouseStart) < 5) {
+        
+        // Clicking an still now removes it
+        if (clickedObject != null
+            && clickedObject.containsPoint(x + xOffset,y + yOffset)) {
+            clickedObject.exists = false;
+        }
     }
 }
 
