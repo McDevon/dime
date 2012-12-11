@@ -1,18 +1,22 @@
-// Game settings
-var refreshRate = 1/30;     // Canvas refresh rate in seconds
-var tileSize    = 80;       // Tile size
-var xAreaSize   = 20;       // Game area size
-var yAreaSize   = 20;
-
-// Game state as global variables
-var gameTime    = 0.0;
-var xOffset     = 0.0;
-var yOffset     = 0.0;
-
 // Canvas
 var canvas = document.getElementById("game");
 var context = canvas.getContext("2d");
 
+// Game settings
+var refreshRate = 1/30;     // Canvas refresh rate in seconds
+var tileSize    = 80;       // Tile size
+var xAreaSize   = 20;       // Game area size in tiles
+var yAreaSize   = 20;
+var xCanvasSize = canvas.getAttribute("width");
+var yCanvasSize = canvas.getAttribute("height");
+
+// Game state as global variables
+var gameTime    = 0.0;
+
+// Visual state
+var xOffset     = 0.0;
+var yOffset     = 0.0;
+var borders     = [false, false, false, false]; // Stoppers for left, up, right, down.
 
 // Wait for loading to finish, then let's go
 jQuery(document).ready(function() {
@@ -29,9 +33,14 @@ var grid    = [];
 
 // Reset canvas area
 function resetGame() {
-	context.clearRect(0,0,canvas.getAttribute("width"),canvas.getAttribute("height"));
+	context.clearRect(0,0,xCanvasSize,yCanvasSize);
 	
     objects = [];
+    
+    // Reset game state
+    gameTime = 0.0;
+    xOffset = 0.0;
+    yOffset = 0.0;
     
     // Objects
     var tile1 = new Tile("images/land2.png", "Sweden");
@@ -50,30 +59,6 @@ function resetGame() {
 
 var clickedObject = null;
 
-// Check for mouse clicks
-canvas.onmousedown = function(e) {
-	var x = currentMouseXPosition(e) - currentCanvasXOffset();
-	var y = currentMouseYPosition(e) - currentCanvasYOffset();
-	
-    for (var i = 0; i < objects.length; i++) {
-        var object = objects[i];
-        
-        // Remove object if clicked on it
-        if (object.exists && object.containsPoint(x,y)) {
-            clickedObject = object;
-        }
-    }    
-}
-canvas.onmouseup = function(e) {
-	var x = currentMouseXPosition(e) - currentCanvasXOffset();
-	var y = currentMouseYPosition(e) - currentCanvasYOffset();
-	
-    if (clickedObject != null && clickedObject.containsPoint(x,y)) {
-        clickedObject.exists = false;
-    }
-    clickedObject = null;
-}
-
 /*
  *  Main animation loop
  */
@@ -81,7 +66,7 @@ canvas.onmouseup = function(e) {
 function mainLoop() {
 	// Clear the canvas
 	context.clearRect(0,0,canvas.getAttribute("width"),canvas.getAttribute("height"));
-
+    
     // Draw all objects
     for (var i = 0; i < objects.length; i++) {
         var object = objects[i];
@@ -94,8 +79,25 @@ function mainLoop() {
         // Animate and draw object if it exists
         else {
             object.animate();
-            object.draw(context);
+            object.draw(context, xOffset, yOffset);
         }
+    }
+    
+    // red
+    context.fillStyle="#FF0000";
+    
+    // Draw border stoppers
+    if (borders[0] == true) {
+        context.fillRect(0,0,3,yCanvasSize);
+    }
+    if (borders[1] == true) {
+        context.fillRect(0,0,xCanvasSize,3);
+    }
+    if (borders[2] == true) {
+        context.fillRect(xCanvasSize - 3,0,3,yCanvasSize);
+    }
+    if (borders[3] == true) {
+        context.fillRect(0,yCanvasSize - 3,xCanvasSize,3);
     }
 }
 

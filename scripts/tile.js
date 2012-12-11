@@ -45,8 +45,8 @@ Tile.prototype.setPixelPosition = function(x, y) {
     this.y  = y;
 };
 Tile.prototype.animate = function() {};
-Tile.prototype.draw = function(context) {
-    context.drawImage(this.image, this.x, this.y, this.width, this.height);
+Tile.prototype.draw = function(context, xOffset, yOffset) {
+    context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
 };
     
 // Nothing needs to be done here as drawing is done in the main loop    
