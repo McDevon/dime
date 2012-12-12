@@ -126,6 +126,5 @@ document.onmousemove = function(e) {
         
         mouseRefresh = false;
     }
-    //draw();
 }
 
