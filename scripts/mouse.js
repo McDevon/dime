@@ -128,3 +128,40 @@ document.onmousemove = function(e) {
     }
 }
 
+//adding the event listerner for Mozilla
+if(window.addEventListener) {
+    document.addEventListener('DOMMouseScroll', mouseScroll, false);
+}
+
+//for IE/OPERA etc
+document.onmousewheel = mouseScroll;
+
+function mouseScroll(e)
+{
+    // Clear mouse events
+    clickedObject = null;
+    mouseDown = false;
+
+    var delta = 0;
+ 
+    if (!e) e = window.event;
+ 
+    // normalize the delta
+    if (e.wheelDelta) {
+        // IE and Opera
+        delta = e.wheelDelta / 60;
+ 
+    } else if (e.detail) {
+        // W3C
+        delta = -e.detail / 2;
+    }
+    
+    yOffset -= delta * 10;
+    
+    if (yOffset <= 0) {yOffset = 0; borders[1] = true;}
+    else {borders[1] = false;}
+    if (yOffset >= yAreaSize * tileSize - yCanvasSize) {yOffset = yAreaSize * tileSize - yCanvasSize; borders[3] = true;}
+    else {borders[3] = false;}
+
+}
+

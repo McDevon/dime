@@ -22,11 +22,11 @@ var borders     = [false, false, false, false]; // Stoppers for left, up, right,
 
 // Different building types
 var buildingTypes = [
-    new BuildingType ("", "bear cave", 2000, new UnitType("bear", 100, 0.5, 20, 5), 0.1, 0, false, false, 0, 0),
-    new BuildingType ("", "defence tower", 500, false, 0, 0, false, false, 1, 20),
-    new BuildingType ("", "town hub", 5000, new UnitType("gatherer", 50, 1, 10, 5), 0, 10, true, true, 2, 10),
-    new BuildingType ("", "berry hut", 1000, false, 0, 0, true, false, 0, 0),
-    new BuildingType ("", "shroom basket", 1000, false, 0, 0, false, true, 0, 0),
+    new BuildingType ("images/bearcave.png", "bear cave", 2000, new UnitType("bear", 100, 0.5, 20, 5), 0.1, 0, false, false, 0, 0),
+    new BuildingType ("images/tower.png", "defence tower", 500, false, 0, 0, false, false, 1, 20),
+    new BuildingType ("images/towncenter.png", "town hub", 5000, new UnitType("gatherer", 50, 1, 10, 5), 0, 10, true, true, 2, 10),
+    new BuildingType ("images/berryhut.png", "berry hut", 1000, false, 0, 0, true, false, 0, 0),
+    new BuildingType ("images/shroomhut.png", "shroom basket", 1000, false, 0, 0, false, true, 0, 0),
     ];
 
 // Different tile areas
@@ -84,7 +84,7 @@ function raiseLand(x, y, resume, startPoint) {
             // Really simple type randomization
             var rand = Math.random() * 100.0;
             if (rand < 40) { type = tileTypes[0]; }
-            else if (rand < 80) { type = tileTypes[1]; }
+            else if (rand < 70) { type = tileTypes[1]; }
             else if (rand < 90) { type = tileTypes[2]; }
             else if (rand < 95) { type = tileTypes[3]; shroomsGenerated = true;}
             else { type = tileTypes[4]; berriesGenerated = true;}
@@ -92,7 +92,7 @@ function raiseLand(x, y, resume, startPoint) {
         console.log("New tile: " + type.name);
         var tile = new Tile(type);
         tile.setPosition(x, y);
-        objects.push(tile);
+        //objects.push(tile);
         
         // Recursion to every direction
         raiseLand(x - 1, y, resume - 15, false);

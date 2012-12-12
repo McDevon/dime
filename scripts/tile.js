@@ -50,8 +50,13 @@ function Tile(tileType)
     this.passability    = tileType.passability;
     this.berries        = tileType.berries;
     this.shrooms        = tileType.shrooms;
+    
+    // Add to drawn objects
+    objects.push(this);
+    
     if (tileType.buildingType) {
         this.building   = new Building(tileType.buildingType, 0);
+        objects.push(this.building);
     } else {
         this.building   = false;
     }
@@ -78,6 +83,11 @@ Tile.prototype.setPosition = function(x, y) {
     // Given position is tile position, not pixel position
     this.x  = x * this.width;
     this.y  = y * this.height;
+    
+    // Position the building also
+    if (this.building) {
+        this.building.setPosition(this.x, this.y);
+    }
     
     // Mark tile to grid
     grid[y*yAreaSize+x] = this;
