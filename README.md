@@ -3,9 +3,19 @@ dime
 
 Dime-kurssin projektityö
 
+## Done
+
+- Tiilet näkyvissä
+- Hiirellä scrollattava pelialue rajoitetuilla reunoilla
+- Kursori hiiren alla olevan ruudun ympärillä
+- Klikkaamisen tunnistus ja erottelu scrollaamisesta
+- Yksikkö-, tiili-, ja rakennustyypit
+- Kuvat (ehkä väliaikaiset) tiilille
+- Kuvat (ehkä väliaikaiset) rakennuksille
+- Rakennukset näkyvät tiilien päällä
+
 ## Todo
 
-- Rakennukset näkyviin
 - Yksiköt näkyviin
 - Yksiköiden pathfinder
 - Yksiköiden 'tekoäly' ja taistelu
