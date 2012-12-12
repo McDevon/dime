@@ -35,11 +35,11 @@ var buildingTypes = [
     //  BuildingType (name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower)
 var tileTypes = [
     new TileType("images/land2.png", "grass", true, 100, 0, 0, false, 80),
-    new TileType("images/land2.png", "plains", true, 90, 0, 0, false, 60),
-    new TileType("images/land1.png", "mountain", false, 20, 0, 0, false, 30),
-    new TileType("images/land1.png", "mushroom forest", false, 60, 0, 10, false, 20),
-    new TileType("images/land1.png", "berry forest", false, 60, 10, 0, false, 20),
-    new TileType("images/land2.png", "bear forest", false, 60, 5, 0, buildingTypes[0], 10),
+    new TileType("images/plains.png", "plains", true, 90, 0, 0, false, 60),
+    new TileType("images/mountain.png", "mountain", false, 20, 0, 0, false, 30),
+    new TileType("images/shroomforest.png", "mushroom forest", false, 60, 0, 10, false, 20),
+    new TileType("images/berryforest.png", "berry forest", false, 60, 10, 0, false, 20),
+    new TileType("images/forest.png", "bear forest", false, 60, 5, 0, buildingTypes[0], 10),
     new TileType("images/land1.png", "start tile", true, 100, 0, 0, buildingTypes[2], 0),
     ];
 

@@ -10,7 +10,6 @@ Dime-kurssin projektityö
 - Yksiköiden pathfinder
 - Yksiköiden 'tekoäly' ja taistelu
 - Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
-
 - Uuden laatan sijoittaminen
 - Rakennusten ostaminen ja rakentaminen (tarvitaanko rakentajayksikköä?)
 - Yksiköiden ostaminen rakennuksista
