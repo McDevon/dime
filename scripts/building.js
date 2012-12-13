@@ -84,6 +84,8 @@ Building.prototype.spawnUnits = function(amount) {
         unit.x = this.tile.x + target.x;
         unit.y = this.tile.y + target.y;
         
+        unit.tile = this.tile;
+        
         // Give the unit a home
         if (this.owner && this.owner.homeTile) {
             unit.homeTile = this.owner.homeTile;

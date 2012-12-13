@@ -18,6 +18,8 @@ function Tile(tileType)
     // these values are default
     this.x              = 0.0;
     this.y              = 0.0;
+    this.xGrid          = 0;
+    this.yGrid          = 0;
     this.exists         = true;     // Switch this to false to destroy object
     this.width          = tileSize;
     this.height         = tileSize;
@@ -39,6 +41,8 @@ function Tile(tileType)
     this.berries        = tileType.berries;
     this.shrooms        = tileType.shrooms;
     
+    this.building       = false;
+    
     // Add to drawn objects
     objects.push(this);
     
@@ -46,8 +50,6 @@ function Tile(tileType)
         this.building       = new Building(tileType.buildingType, 0);
         this.building.tile  = this;
         objects.push(this.building);
-    } else {
-        this.building       = false;
     }
     this.incidence      = tileType.incidence;
 }
@@ -72,6 +74,9 @@ Tile.prototype.setPosition = function(x, y) {
     // Given position is tile position, not pixel position
     this.x  = x * this.width;
     this.y  = y * this.height;
+    
+    this.xGrid = x;
+    this.yGrid = y;
     
     // Position the building also
     if (this.building) {
@@ -110,30 +115,31 @@ Tile.prototype.changeOwner = function (newOwner) {
     }
 };
 Tile.prototype.coordinates = function() {
-    return { x:this.x / this.width, y:this.y / this.height };
+    return { x:this.xGrid, y:this.yGrid };
+    //return { x:this.x / this.width, y:this.y / this.height };
 };
 Tile.prototype.gridIndex = function() {
-    return this.y*yAreaSize+this.x;
+    return this.yGrid*yAreaSize+this.xGrid;
 };
 Tile.prototype.distanceScoreTo = function(tile) {
-    return (this.x - tile.x)^2 + (this.y - tile.y)^2;
+    return Math.pow(this.x - tile.x, 2) + Math.pow(this.y - tile.y, 2);
 };
 Tile.prototype.distanceTo = function(tile) {
-    return Math.sqrt((this.x - tile.x)^2 + (this.y - tile.y)^2) / tileSize;
+    return Math.sqrt(Math.pow(this.xGrid - tile.xGrid, 2) + Math.pow(this.yGrid - tile.yGrid, 2));
 };
 Tile.prototype.neighbours = function() {
     var table = [];
-    if (this.x > 0 && grid[this.y*yAreaSize+(this.x - 1)]) {
-        table.push(grid[this.y*yAreaSize+(this.x - 1)]);
+    if (this.xGrid > 0 && grid[this.yGrid*yAreaSize+(this.xGrid - 1)]) {
+        table.push(grid[this.yGrid*yAreaSize+(this.xGrid - 1)]);
     }
-    if (this.y > 0 && grid[(this.y - 1)*yAreaSize+this.x]) {
-        table.push(grid[(this.y - 1)*yAreaSize+this.x]);
+    if (this.yGrid > 0 && grid[(this.yGrid - 1)*yAreaSize+this.xGrid]) {
+        table.push(grid[(this.yGrid - 1)*yAreaSize+this.xGrid]);
     }
-    if (this.x < (xAreaSize - 1) && grid[this.y*yAreaSize+(this.x + 1)]) {
-        table.push(grid[this.y*yAreaSize+(this.x + 1)]);
+    if (this.xGrid < (xAreaSize - 1) && grid[this.yGrid*yAreaSize+(this.xGrid + 1)]) {
+        table.push(grid[this.yGrid*yAreaSize+(this.xGrid + 1)]);
     }
-    if (this.y < (yAreaSize - 1) && grid[(this.y + 1)*yAreaSize+this.x]) {
-        table.push(grid[(this.y + 1)*yAreaSize+this.x]);
+    if (this.yGrid < (yAreaSize - 1) && grid[(this.yGrid + 1)*yAreaSize+this.xGrid]) {
+        table.push(grid[(this.yGrid + 1)*yAreaSize+this.xGrid]);
     }
     return table;
 };

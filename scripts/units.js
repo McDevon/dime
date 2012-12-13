@@ -13,12 +13,21 @@ function Unit(unitType, owner)
     // these values are default
     this.x              = 0.0;
     this.y              = 0.0;
+    
+    // Movement
+    this.xSpeed         = 0.0;
+    this.ySpeed         = 0.0;
+    this.xTarget        = 0.0;
+    this.yTarget        = 0.0;
+    this.distance       = 0.0;
+    this.targetTile     = false;
+    this.targetReached  = true;
+    
     this.exists         = true;     // Switch this to false to destroy object
     this.width          = tileSize / 4.0;
     this.height         = tileSize / 4.0;
     this.tile           = false;    // The tile this unit is currently on
     this.homeTile       = false;
-    this.targetTile     = false;
     
     this.path           = false;    // Designated movement path
 
@@ -127,9 +136,44 @@ Unit.prototype.control = function() {
 
         }
         
-        // Third, if target is set and not there, start moving there via route calculated
-        if (this.targetTile && this.targetTile !== this.tile) {
+        // Move, if on route
+        if (!!! this.targetReached) {
+            this.x += this.xSpeed;
+            this.y += this.ySpeed;
             
+            this.distance -= refreshRate * tileSize * this.unitType.speed;
+            
+            if (this.distance <= 0) {
+                this.targetReached = true;
+                
+                // Remove tile from path
+                if (this.path.length > 0) {
+                    this.path.splice(0,1);
+                }
+            }
+        }
+        
+        // Third, if target is set and not there but reached some tile, start moving there via route calculated
+        if (this.targetReached && this.targetTile && this.targetTile !== this.tile) {
+            // Get new target point in next square
+            var target = this.createRelativePoint(this.path[0]);
+            
+            this.xTarget = this.tile.x + target.x;
+            this.yTarget = this.tile.y + target.y;
+            
+            this.targetReached = false;
+            
+            var angle = Math.atan2(this.xTarget - this.x, this.yTarget - this.y);
+            this.xSpeed = refreshRate * tileSize * this.unitType.speed * Math.cos(angle);
+            this.ySpeed = refreshRate * tileSize * this.unitType.speed * Math.sin(angle);
+            
+            this.distance = Math.sqrt(Math.pow(this.xTarget - this.x, 2) + Math.pow(this.yTarget - this.y, 2));
+        }
+        
+        // Stop if at target
+        if (this.targetReached && this.targetTile && this.targetTile === this.tile) {
+            this.xSpeed = 0.0;
+            this.ySpeed = 0.0;
         }
         
         // Fourth, if at target and needs to collect, start collecting
@@ -183,7 +227,7 @@ Unit.prototype.generatePathTo = function(goal) {
         }
         // Remove target from nodes
         for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i] == current) {
+            if (nodes[i] === current) {
                 nodes.splice(i, 1);
                 break;
             }
@@ -260,7 +304,7 @@ Unit.prototype.getPathToNearestTile = function(isTarget) {
         
         // Remove target from nodes
         for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i] == current) {
+            if (nodes[i] === current) {
                 nodes.splice(i, 1);
                 break;
             }
