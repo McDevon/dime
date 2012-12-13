@@ -1,4 +1,4 @@
-function UnitType(image, name, hp, speed, attack, defence)
+function UnitType(image, name, hp, speed, attack, defence, maxResources)
 {
     this.image      = image;
     this.name       = name;
@@ -6,6 +6,7 @@ function UnitType(image, name, hp, speed, attack, defence)
     this.speed      = speed;
     this.attack     = attack;
     this.defence    = defence;
+    this.maxResources = maxResources;
 }
 
 function Unit(unitType, owner)
@@ -13,6 +14,11 @@ function Unit(unitType, owner)
     // these values are default
     this.x              = 0.0;
     this.y              = 0.0;
+    
+    this.berries        = 0;
+    this.shrooms        = 0;
+    
+    this.collectSpeed   = 5;    // Collect speed of items / sec
     
     // Movement
     this.xSpeed         = 0.0;
@@ -156,8 +162,11 @@ Unit.prototype.control = function() {
                 
                 // Remove tile from path
                 if (this.path.length > 0) {
+                    
+                    // TODO: Could change current tile when crossing the tile line.
                     this.path[0].units.push(this);
                     this.tile = this.path[0];
+                    
                     this.path.splice(0,1);
                 }
                 
@@ -185,11 +194,53 @@ Unit.prototype.control = function() {
         
         // Stop if at target
         if (this.targetReached && this.targetTile && this.targetTile === this.tile) {
-            this.xSpeed = 0.0;
-            this.ySpeed = 0.0;
+            if (this.xSpeed > 0.0 || this.ySpeed > 0.0) {
+                this.xSpeed = 0.0;
+                this.ySpeed = 0.0;
+            }
+            
+            var gathering = false;
+            
+            // If at target and needs to drop, drop
+            if (this.tile.building && this.tile.building.buildingType.gatherShrooms && this.shrooms > 0.0) {
+                this.owner.shrooms += this.shrooms;
+                this.shrooms = 0;
+                this.targetTile = false;    // Get new target next time
+            }
+            if (this.tile.building && this.tile.building.buildingType.gatherBerries && this.berries > 0.0) {
+                this.owner.berries += this.berries;
+                this.berries = 0;
+                this.targetTile = false;    // Get new target next time
+            }
+                
+            // Fourth, if at target and needs to collect, collect
+            if (this.tile.shrooms > 0.0 && this.shrooms + this.berries < this.unitType.maxResources) {
+                // If this somehow gets the value past maxResources, doesn't matter.
+                this.tile.shrooms -= this.collectSpeed * refreshRate;
+                this.shrooms += this.collectSpeed * refreshRate;
+                gathering = true;
+            } else if (this.tile.berries > 0.0 && this.shrooms + this.berries < this.unitType.maxResources) {
+                // If this somehow gets the value past maxResources, doesn't matter.
+                this.tile.berries -= this.collectSpeed * refreshRate;
+                this.berries += this.collectSpeed * refreshRate;
+                gathering = true;
+            }
+            
+            // If full, go to nearest drop building
+            if (gathering && this.shrooms + this.berries >= this.unitType.maxResources) {
+                if (this.shrooms > 0.0) {
+                    this.path = this.getPathToNearestTile(function(target) { return (target.building
+                                                                                    && target.building.buildingType.gatherShrooms); });
+               }
+                else if (this.berries > 0.0) {
+                    this.path = this.getPathToNearestTile(function(target) { return (target.building && target.building.buildingType.gatherBerries); });
+                }
+                if (this.path) {
+                    this.targetTile = this.path[this.path.length - 1];
+                }
+            }
+
         }
-        
-        // Fourth, if at target and needs to collect, start collecting
         
         // Fifth, if at target and needs to build, start building
         
@@ -288,6 +339,7 @@ Unit.prototype.generatePathTo = function(goal) {
     return false;
 };
 
+// Dijkstra of finding a target type of tile (could have been integrated to A*)
 Unit.prototype.getPathToNearestTile = function(isTarget) {
     var startTile = this.tile;
     var nodes = [];
