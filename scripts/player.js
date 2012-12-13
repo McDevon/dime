@@ -7,5 +7,8 @@ function Player(name) {
     this.shrooms =  0;
     
     // Home base
-    this.homeTile = false; 
+    this.homeTile = false;
+    
+    // Preference for gatherer action
+    this.gathererPreference = 0;    // 0 = none, 1 = berries, 2 = shrooms, 3 = building.
 }

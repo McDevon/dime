@@ -70,7 +70,7 @@ document.getElementById("game").onmousedown = function(e) {
     xMousePrevious = x;
     yMousePrevious = y;
     
-}
+};
 
 document.getElementById("game").onmouseup = function(e) {
 	var x = currentMouseXPosition(e) - currentCanvasXOffset();
@@ -138,6 +138,7 @@ document.getElementById("game").onmousewheel = mouseScroll;
 
 function mouseScroll(e)
 {
+    //console.log(e);
     // Clear mouse events
     clickedObject = null;
     mouseDown = false;
@@ -168,3 +169,51 @@ function mouseScroll(e)
 
 }
 
+// Testing some iPad controls
+document.getElementById("game").addEventListener('touchmove', ipadScroll, false);
+document.getElementById("game").ontouchstart = function(e){ 
+    xPadPrev = false;
+    yPadPrev = false;
+}
+
+var xPadPrev = false;
+var yPadPrev = false;
+
+function ipadScroll(e) {
+    // Disable normal ipad scrolling
+    e.preventDefault();
+    
+    clickedObject = null;
+    mouseDown = false;
+
+    var xDelta = 0;
+    var yDelta = 0;
+    
+    if (!e) e = window.event;
+ 
+    if (e.pageX && e.pageY) {
+        if (xPadPrev) {
+            xDelta = xPadPrev - e.pageX;
+            yDelta = yPadPrev - e.pageY;
+        }
+        xPadPrev = e.pageX;
+        yPadPrev = e.pageY;
+    }
+    
+    yOffset += yDelta;
+    xOffset += xDelta;
+    
+    // Avoid flickering on Safari
+    yOffset = Math.floor(yOffset);
+    xOffset = Math.floor(xOffset);
+    
+    // Constrains
+    if (xOffset <= 0) {xOffset = 0; borders[0] = true;}
+    else {borders[0] = false;}
+    if (xOffset >= xAreaSize * tileSize - xCanvasSize) {xOffset = xAreaSize * tileSize - xCanvasSize; borders[2] = true;}
+    else {borders[2] = false;}
+    if (yOffset <= 0) {yOffset = 0; borders[1] = true;}
+    else {borders[1] = false;}
+    if (yOffset >= yAreaSize * tileSize - yCanvasSize) {yOffset = yAreaSize * tileSize - yCanvasSize; borders[3] = true;}
+    else {borders[3] = false;}
+}

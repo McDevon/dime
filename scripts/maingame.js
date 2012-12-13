@@ -57,7 +57,7 @@ var tileIncidenceSum = 0;
 for (var i = 0; i < tileTypes.length; i++) {
     tileIncidenceSum += tileTypes[i].incidence;
 }
-console.log("Tile Incidence sum: " + tileIncidenceSum);
+//console.log("Tile Incidence sum: " + tileIncidenceSum);
 
 // Make sure to have this function in use with all browsers
 window.requestAnimFrame = (function(){
@@ -100,7 +100,7 @@ function raiseLand(x, y, resume, startPoint) {
             else if (rand < 95) { type = tileTypes[3]; shroomsGenerated = true;}
             else { type = tileTypes[4]; berriesGenerated = true;}
         }
-        console.log("New tile: " + type.name);
+        //console.log("New tile: " + type.name);
         var tile = new Tile(type);
         tile.setPosition(x, y);
         

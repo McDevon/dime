@@ -173,7 +173,7 @@ Unit.prototype.control = function() {
              }
         }
         
-        // Third, if target is set and not there but reached some tile, start moving there via route calculated
+        // Third, if target is set and not there but unit reached some tile, start moving towards target via route calculated
         if (this.targetReached && this.targetTile && this.targetTile !== this.tile) {
             var nextTile = this.path[0];
             
@@ -214,6 +214,7 @@ Unit.prototype.control = function() {
             }
                 
             // Fourth, if at target and needs to collect, collect
+            // TODO: Gather in chunks, not decimals
             if (this.tile.shrooms > 0.0 && this.shrooms + this.berries < this.unitType.maxResources) {
                 // If this somehow gets the value past maxResources, doesn't matter.
                 this.tile.shrooms -= this.collectSpeed * refreshRate;
@@ -233,12 +234,15 @@ Unit.prototype.control = function() {
                                                                                     && target.building.buildingType.gatherShrooms); });
                }
                 else if (this.berries > 0.0) {
-                    this.path = this.getPathToNearestTile(function(target) { return (target.building && target.building.buildingType.gatherBerries); });
+                    this.path = this.getPathToNearestTile(function(target) { return (target.building
+                                                                                    && target.building.buildingType.gatherBerries); });
                 }
                 if (this.path) {
                     this.targetTile = this.path[this.path.length - 1];
                 }
             }
+            
+            // TODO: When resources are finished from a tile
 
         }
         
