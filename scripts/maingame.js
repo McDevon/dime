@@ -4,7 +4,7 @@ var canvas = document.getElementById("game");
 var context = canvas.getContext("2d");
 
 // Game settings
-var refreshRate = 1/10;     // Canvas refresh rate in seconds
+var refreshRate = 1/20;     // Canvas refresh rate in seconds
 var tileSize    = 80;       // Tile size
 var xAreaSize   = 21;       // Game area size in tiles
 var yAreaSize   = 21;
@@ -14,6 +14,9 @@ var yCanvasSize = canvas.getAttribute("height");
 // Game state as global variables
 var gameTime    = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
+
+var playerLocal = false;
+var plauerAI    = false;
 
 // Visual state
 var xOffset     = 0.0;
@@ -70,10 +73,12 @@ window.requestAnimFrame = (function(){
 
 /* 
  *  All drawn objects live in 'objects' array
+ *  Except for units, who are located in 'units' array for faster search and to be drawn always on top of other items
  *  The 'grid' is the game map
  */
 var objects = [];
 var grid    = [];
+var units   = [];
 
 // Make sure to have both of these at startup
 var berriesGenerated = false;
@@ -117,10 +122,18 @@ function resetGame() {
     yOffset     = (tileSize * yAreaSize) / 2 - (yCanvasSize / 2);
     borders     = [false, false, false, false];
     
+    playerLocal = new Player("player");
+    playerAI    = new Player("AI");
+    
+    // Starting resources
+    playerLocal.berries = 100;
+    playerLocal.shrooms = 100;
+    
     // Create starting area with berries and mushrooms
     do {
         grid    = [];
         objects = [];
+        units   = [];
         berriesGenerated = false;
         shroomsGenerated = false;
         raiseLand(Math.floor(xAreaSize / 2), Math.floor(yAreaSize / 2), 100, true);
@@ -130,10 +143,14 @@ function resetGame() {
     var homeTile = grid[Math.floor(yAreaSize / 2)*yAreaSize+Math.floor(xAreaSize / 2)];
     if (homeTile) {
         if (homeTile.building) {
-            homeTile.building.owner = 1;
+            homeTile.building.owner = playerLocal;
+            
+            // Spawn two gatherers
             homeTile.building.spawnUnits(2);
+            
+            // Set player home tile
+            playerLocal.homeTile = homeTile;
         }
-        //homeTile.units.push(new Unit(unitTypes[0], 1)); // player n:o 1 is the local human player
     }
 }
 
@@ -148,6 +165,12 @@ function mainLoop() {
     // Refresh timer and run the game (not when waiting for player to place a tile)
     if (!selecting) {
         gameTime += refreshRate;
+        
+        // Move all units
+        for (var i = 0; i < units.length; i++) {
+            var object = units[i];
+            object.control();
+        }
     }
         
     // Give chance to put the next tile somewhere
@@ -178,6 +201,21 @@ function draw() {
         // Remove object if marked destroyed
         if ( !!! object.exists) {
             objects.splice(i, 1);
+            i--;
+        }
+        // Draw object if it exists
+        else {
+            //object.animate();
+            object.draw(m_context, xOffset, yOffset);
+        }
+    }
+    // Draw all units
+    for (var i = 0; i < units.length; i++) {
+        var object = units[i];
+        
+        // Remove object if marked destroyed
+        if ( !!! object.exists) {
+            units.splice(i, 1);
             i--;
         }
         // Animate and draw object if it exists

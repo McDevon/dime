@@ -84,7 +84,12 @@ Building.prototype.spawnUnits = function(amount) {
         unit.x = this.tile.x + target.x;
         unit.y = this.tile.y + target.y;
         
-        objects.push(unit);
+        // Give the unit a home
+        if (this.owner && this.owner.homeTile) {
+            unit.homeTile = this.owner.homeTile;
+        }
+        
+        units.push(unit);
     }
     
 }; 

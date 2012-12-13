@@ -130,11 +130,11 @@ document.onmousemove = function(e) {
 
 //adding the event listerner for Mozilla
 if(window.addEventListener) {
-    document.addEventListener('DOMMouseScroll', mouseScroll, false);
+    document.getElementById("game").addEventListener('DOMMouseScroll', mouseScroll, false);
 }
 
 //for IE/OPERA etc
-document.onmousewheel = mouseScroll;
+document.getElementById("game").onmousewheel = mouseScroll;
 
 function mouseScroll(e)
 {

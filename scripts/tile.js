@@ -5,6 +5,7 @@ function TileType(image, name, buildable, passability, berries, shrooms, buildin
     this.image          = image;
     this.name           = name;
     this.buildable      = buildable;
+    this.passability    = passability;
     this.berries        = berries;
     this.shrooms        = shrooms;
     this.buildingType   = buildingType;
@@ -22,6 +23,11 @@ function Tile(tileType)
     this.height         = tileSize;
     
     this.units          = [];
+    
+    // Pathfinding help values
+    this.f_score        = 0.0;
+    this.g_score        = 0.0;
+    this.previousTile   = false;
     
     // Set values from constructor
     this.name           = tileType.name;
@@ -102,4 +108,32 @@ Tile.prototype.changeOwner = function (newOwner) {
     if (this.building) {
         this.building.owner = newOwner;
     }
+};
+Tile.prototype.coordinates = function() {
+    return { x:this.x / this.width, y:this.y / this.height };
+};
+Tile.prototype.gridIndex = function() {
+    return this.y*yAreaSize+this.x;
+};
+Tile.prototype.distanceScoreTo = function(tile) {
+    return (this.x - tile.x)^2 + (this.y - tile.y)^2;
+};
+Tile.prototype.distanceTo = function(tile) {
+    return Math.sqrt((this.x - tile.x)^2 + (this.y - tile.y)^2) / tileSize;
+};
+Tile.prototype.neighbours = function() {
+    var table = [];
+    if (this.x > 0 && grid[this.y*yAreaSize+(this.x - 1)]) {
+        table.push(grid[this.y*yAreaSize+(this.x - 1)]);
+    }
+    if (this.y > 0 && grid[(this.y - 1)*yAreaSize+this.x]) {
+        table.push(grid[(this.y - 1)*yAreaSize+this.x]);
+    }
+    if (this.x < (xAreaSize - 1) && grid[this.y*yAreaSize+(this.x + 1)]) {
+        table.push(grid[this.y*yAreaSize+(this.x + 1)]);
+    }
+    if (this.y < (yAreaSize - 1) && grid[(this.y + 1)*yAreaSize+this.x]) {
+        table.push(grid[(this.y + 1)*yAreaSize+this.x]);
+    }
+    return table;
 };

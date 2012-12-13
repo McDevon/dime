@@ -13,10 +13,10 @@ Dime-kurssin projektityö
 - Kuvat (ehkä väliaikaiset) tiilille
 - Kuvat (ehkä väliaikaiset) rakennuksille
 - Rakennukset näkyvät tiilien päällä
+- Yksiköt näkyviin
 
 ## Todo
 
-- Yksiköt näkyviin
 - Yksiköiden pathfinder
 - Yksiköiden 'tekoäly' ja taistelu
 - Yksiköiden resurssien keräys ja tuonti keräyspisteeseen

@@ -17,13 +17,17 @@ function Unit(unitType, owner)
     this.width          = tileSize / 4.0;
     this.height         = tileSize / 4.0;
     this.tile           = false;    // The tile this unit is currently on
+    this.homeTile       = false;
+    this.targetTile     = false;
+    
+    this.path           = false;    // Designated movement path
 
     this.image          = new Image();
     this.image.src      = unitType.image;
     this.image.onload   = this.imageOnload;
     
     // Add to drawn objects
-    objects.push(this);
+    //objects.push(this);
     
     // Constructor values
     this.hp             = unitType.hp;
@@ -89,3 +93,217 @@ Unit.prototype.createRelativePoint = function(tile) {
 };
 
 Unit.prototype.animate = function() {};
+
+// AI pass for object, also the moving happens here
+Unit.prototype.control = function() {
+
+    // Gatherer ai
+    if (this.unitType.name == "gatherer") {
+        
+        // First, watch for enemies. If one found in same tile, return to base, unless already at base or going there
+        if (this.targetTile !== this.homeTile) {
+            for (var i = 0; i < this.tile.units.length; i++) {
+                var unit = this.tile.units[i];
+                if (unit.owner !== this.owner) {
+                    // Gotta run if not at home base
+                    if (this.tile.building && this.tile.building.buildingType.name == "town hub") {
+                        return; // At home, do nothing
+                    }
+                    if (this.homeTile) {
+                        this.path = this.generatePathTo(this.homeTile);
+                        this.targetTile = this.homeTile;
+                    }
+                }
+            }
+        }
+        
+        // Second, if no target is set, choose either build, berry or shroom target
+        if (!!! this.targetTile) {
+            // Choose berries
+            this.path = this.getPathToNearestTile(function(target) { return target.berries > 0; });
+            if (this.path) {
+                this.targetTile = this.path[this.path.length - 1];
+            }
+
+        }
+        
+        // Third, if target is set and not there, start moving there via route calculated
+        if (this.targetTile && this.targetTile !== this.tile) {
+            
+        }
+        
+        // Fourth, if at target and needs to collect, start collecting
+        
+        // Fifth, if at target and needs to build, start building
+        
+        // Sixth, if at target and ready & capable to unload, unload resources to player inventory
+    }
+    
+    // Attacker ai
+    else {
+        
+    }
+};
+
+// Pathfinding to target (A*)
+Unit.prototype.generatePathTo = function(goal) {
+
+    var startTile = this.tile;
+
+    var closed  = [];
+    var open    = [startTile];
+    var startIndex;
+    var nodes = [];
+    
+    // Create an array of tiles
+    for (var i = 0; i < grid.length; i++) {
+        if (grid[i]) {
+            nodes.push(grid[i]);
+            grid[i].f_score = goal.distanceTo(grid[i]);
+            grid[i].g_score = startTile.distanceTo(grid[i]);
+            grid[i].previousTile = false;
+        }
+    }
+    
+    startTile.g_score = 0;
+        
+    while (nodes.length > 0) {
+        var current = false;
+        // Get node with lowest score
+        for (var i = 0; i < nodes.length; i++) {
+            if (!current) {
+                current = nodes[i];
+            } else if (current.f_score > nodes[i].f_score) {
+                current = nodes[i];
+            }
+        }
+        // If target found, we're done here
+        if (current === goal) {
+            return this.reconstructPathTo(goal);
+        }
+        // Remove target from nodes
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i] == current) {
+                nodes.splice(i, 1);
+                break;
+            }
+        }
+        // Add current to closed
+        closed.push(current);
+        var neighbours = current.neighbours();
+        for (var i = 0; i < neighbours.length; i++) {
+            var neighbour = neighbours[i];
+            
+            // Check if this tile is already closed
+            var inClosed = false;
+            for (var j = 0; j < closed.length; j++) {
+                if (neighbour === closed[j]) {
+                    inClosed = true;
+                    break;
+                }
+            }
+            if (inClosed) { continue; }
+            
+            // Weighted distance to neighbour
+            var t_g = current.g_score + (100 / neighbour.passability);
+            
+            var inOpen = false;
+            // Check whether found in open set
+            for (var j = 0; j < open.length; j++) {
+                if (open[j] === neighbour) {
+                    inOpen = true;
+                    break;
+                }
+            }
+            
+            // This is currently best path
+            if (!inOpen || t_g <= neighbour.g_score) {
+                neighbour.previousTile = current;
+                neighbour.g_score = t_g;
+                neighbour.f_score = t_g + goal.distanceTo(neighbour);
+                if (!inOpen) {
+                    open.push(neighbour);
+                }
+            }
+        }        
+    }
+    
+    return false;
+};
+
+Unit.prototype.getPathToNearestTile = function(isTarget) {
+    var startTile = this.tile;
+    var nodes = [];
+    var target = false;
+    
+    // Create an array of tiles
+    for (var i = 0; i < grid.length; i++) {
+        if (grid[i]) {
+            nodes.push(grid[i]);
+            grid[i].g_score = 100001;       // Close enough
+            grid[i].previousTile = false;
+        }
+    }
+    
+    startTile.g_score = 0;
+    
+    while (nodes.length > 0) {
+        var current = false;
+        // Get node with lowest score
+        for (var i = 0; i < nodes.length; i++) {
+            if (!current) {
+                current = nodes[i];
+            } else if (current.g_score > nodes[i].g_score) {
+                current = nodes[i];
+            }
+        }
+        
+        // Remove target from nodes
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i] == current) {
+                nodes.splice(i, 1);
+                break;
+            }
+        }
+        
+        if (current.g_score > 100000) {
+            break;
+        }
+        
+        var neighbours = current.neighbours();
+        for (var i = 0; i < neighbours.length; i++) {
+            var neighbour = neighbours[i];
+                       
+            // Weighted distance to neighbour
+            var t_g = current.g_score + (100 / neighbour.passability);
+            
+
+            // This is currently best path
+            if (t_g < neighbour.g_score) {
+                neighbour.previousTile = current;
+                neighbour.g_score = t_g;
+            }
+        }          
+        // If given target type is found, we're done here
+        if (isTarget(current)) {
+            target = current;
+            break;
+        }
+        
+    }
+    
+    if (target) {
+        return this.reconstructPathTo(target);
+    } else { return false; }
+};
+
+Unit.prototype.reconstructPathTo = function(goal) {
+    var current = goal;
+    var path = [];
+    while (current && current !== this.tile) {
+        path.push(current);
+        current = current.previousTile;
+    }
+    return path.reverse();
+};
+
