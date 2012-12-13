@@ -19,6 +19,7 @@ function Unit(unitType, owner)
     this.shrooms        = 0;
     
     this.collectSpeed   = 5;    // Collect speed of items / sec
+    this.repairSpeed    = 10;   // Speed of reapiring and building buildings. hp / sec
     
     // Movement
     this.xSpeed         = 0.0;
@@ -134,8 +135,49 @@ Unit.prototype.control = function() {
         
         // Second, if no target is set, choose either build, berry or shroom target
         if (!!! this.targetTile) {
-            // Choose berries
-            this.path = this.getPathToNearestTile(function(target) { return target.berries > 0; });
+            // Target area type (1 = berries, 2 = shrooms, 3 = buildings)
+            var targetAreaType = this.owner.gathererPreference;
+            var iter = 3;
+            this.path = false;
+            
+            // If no user preference, pick something by yourself
+            if (targetAreaType == 0) {
+            
+                var bestResource = Math.max(this.owner.berries, this.owner.shrooms);
+                
+                // Check for which resource to search for
+                if (Math.abs(this.owner.berries - this.owner.shrooms) < bestResource / 2) {
+                    if (Math.random() < 0.5)
+                        targetAreaType = 1;
+                    else
+                        targetAreaType = 2;
+                }
+                else if (this.owner.shrooms > this.owner.berries) {
+                    targetAreaType = 1;
+                } else {
+                    targetAreaType = 2;
+                }
+            }
+                    
+            // Check if wanted type of place can be found
+            while (!this.path && iter > 0) {
+                if (targetAreaType <= 0) { targetAreaType = 3 };
+                switch (targetAreaType) {
+                    case 1:
+                        this.path = this.getPathToNearestTile(function(target) { return target.berries > 0; });
+                        break;
+                    case 2:
+                        this.path = this.getPathToNearestTile(function(target) { return target.shrooms > 0; });
+                        break;
+                    case 3:
+                        this.path = this.getPathToNearestTile(function(target) { return (target.building
+                                                                                && target.building.hp < target.building.buildingType.hp); });
+                        break;
+                }
+                targetAreaType--;
+                iter--; // Don't stay in this loop. If there is nothing to do, do nothing.
+            }
+            
             if (this.path) {
                 this.targetTile = this.path[this.path.length - 1];
             }
@@ -228,7 +270,8 @@ Unit.prototype.control = function() {
             }
             
             // If full, go to nearest drop building
-            if (gathering && this.shrooms + this.berries >= this.unitType.maxResources) {
+            if (gathering && (this.shrooms + this.berries >= this.unitType.maxResources
+                || (this.tile.shrooms <= 0.0 && this.tile.berries <= 0.0))) {
                 if (this.shrooms > 0.0) {
                     this.path = this.getPathToNearestTile(function(target) { return (target.building
                                                                                     && target.building.buildingType.gatherShrooms); });
@@ -242,13 +285,25 @@ Unit.prototype.control = function() {
                 }
             }
             
-            // TODO: When resources are finished from a tile
-
+            // Fifth, if at target and needs to build, start building
+            if (this.tile.building
+                && this.tile.building.owner === this.owner
+                && this.tile.building.hp < this.tile.building.buildingType.hp) {
+                // If dropped something here, this needs to be checked
+                if (this.targetTile === false) {
+                    this.targetTile = this.tile;
+                }
+                
+                this.tile.building.hp += this.repairSpeed * refreshRate;
+                
+                // When done, figure out something else to do
+                if (this.tile.building.hp >= this.tile.building.buildingType.hp) {
+                    
+                    this.tile.building.hp = this.tile.building.buildingType.hp
+                    this.targetTile = false;
+                }
+            }
         }
-        
-        // Fifth, if at target and needs to build, start building
-        
-        // Sixth, if at target and ready & capable to unload, unload resources to player inventory
     }
     
     // Attacker ai
