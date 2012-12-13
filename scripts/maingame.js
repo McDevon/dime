@@ -4,7 +4,7 @@ var canvas = document.getElementById("game");
 var context = canvas.getContext("2d");
 
 // Game settings
-var refreshRate = 1/30;     // Canvas refresh rate in seconds
+var refreshRate = 1/10;     // Canvas refresh rate in seconds
 var tileSize    = 80;       // Tile size
 var xAreaSize   = 21;       // Game area size in tiles
 var yAreaSize   = 21;
@@ -20,11 +20,17 @@ var xOffset     = 0.0;
 var yOffset     = 0.0;
 var borders     = [false, false, false, false]; // Stoppers for left, up, right, down.
 
+// Different unit types
+var unitTypes = [
+    new UnitType("images/villager.png", "gatherer", 50, 1, 10, 5),
+    new UnitType("images/bear.png", "bear", 100, 0.5, 20, 5),
+    ];
+
 // Different building types
 var buildingTypes = [
-    new BuildingType ("images/bearcave.png", "bear cave", 2000, new UnitType("bear", 100, 0.5, 20, 5), 0.1, 0, false, false, 0, 0),
+    new BuildingType ("images/bearcave.png", "bear cave", 2000, unitTypes[1], 0.1, 0, false, false, 0, 0),
     new BuildingType ("images/tower.png", "defence tower", 500, false, 0, 0, false, false, 1, 20),
-    new BuildingType ("images/towncenter.png", "town hub", 5000, new UnitType("gatherer", 50, 1, 10, 5), 0, 10, true, true, 2, 10),
+    new BuildingType ("images/towncenter.png", "town hub", 5000, unitTypes[0], 0, 10, true, true, 2, 10),
     new BuildingType ("images/berryhut.png", "berry hut", 1000, false, 0, 0, true, false, 0, 0),
     new BuildingType ("images/shroomhut.png", "shroom basket", 1000, false, 0, 0, false, true, 0, 0),
     ];
@@ -92,7 +98,6 @@ function raiseLand(x, y, resume, startPoint) {
         console.log("New tile: " + type.name);
         var tile = new Tile(type);
         tile.setPosition(x, y);
-        //objects.push(tile);
         
         // Recursion to every direction
         raiseLand(x - 1, y, resume - 15, false);
@@ -120,6 +125,16 @@ function resetGame() {
         shroomsGenerated = false;
         raiseLand(Math.floor(xAreaSize / 2), Math.floor(yAreaSize / 2), 100, true);
     } while (!!!berriesGenerated || !!!shroomsGenerated);
+    
+    // Add some units for player
+    var homeTile = grid[Math.floor(yAreaSize / 2)*yAreaSize+Math.floor(xAreaSize / 2)];
+    if (homeTile) {
+        if (homeTile.building) {
+            homeTile.building.owner = 1;
+            homeTile.building.spawnUnits(2);
+        }
+        //homeTile.units.push(new Unit(unitTypes[0], 1)); // player n:o 1 is the local human player
+    }
 }
 
 var clickedObject = null;

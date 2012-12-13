@@ -158,6 +158,9 @@ function mouseScroll(e)
     
     yOffset -= delta * 10;
     
+    // Avoid flickering on Safari
+    yOffset = Math.floor(yOffset);
+    
     if (yOffset <= 0) {yOffset = 0; borders[1] = true;}
     else {borders[1] = false;}
     if (yOffset >= yAreaSize * tileSize - yCanvasSize) {yOffset = yAreaSize * tileSize - yCanvasSize; borders[3] = true;}

@@ -20,12 +20,14 @@ function Building(buildingType, owner) {
     this.exists         = true;     // Switch this to false to destroy object
     this.width          = tileSize / 2.0;
     this.height         = tileSize / 2.0;
+    this.tile           = false;
 
     this.image          = new Image();
     this.image.src      = buildingType.image;
     this.image.onload   = this.imageOnload;
     
     // Constructor values
+    this.hp             = buildingType.hp;
     this.buildingType   = buildingType;
     this.owner          = owner;
 }
@@ -63,5 +65,28 @@ Building.prototype.containsPoint = function(x, y) {
     }
     return true;
 };
+Building.prototype.spawnUnits = function(amount) {
+    
+    // Do nothing if there is no unit to spawn
+    if (  !!! this.tile || !!! this.buildingType.spawnedUnit ) {
+        return;
+    }
+    
+    // Spawn amount units
+    for (var i = 0; i < amount; i++) {
+        
+        // Create a unit
+        var unit = new Unit(this.buildingType.spawnedUnit, this.owner);
+        
+        var target = unit.createRelativePoint(this.tile);
+        
+        // Position the unit
+        unit.x = this.tile.x + target.x;
+        unit.y = this.tile.y + target.y;
+        
+        objects.push(unit);
+    }
+    
+}; 
 
 Building.prototype.animate = function() {};

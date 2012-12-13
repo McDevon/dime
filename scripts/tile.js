@@ -12,24 +12,6 @@ function TileType(image, name, buildable, passability, berries, shrooms, buildin
 }
 
 // Tile "class"
-/*function Tile(image, name)
-{
-    // these values are default
-    this.x              = 0.0;
-    this.y              = 0.0;
-    this.exists         = true;     // Switch this to false to destroy object
-    this.width          = tileSize;
-    this.height         = tileSize;
-    this.building       = false;
-    
-    this.units          = [];
-    
-    // Set values from constructor
-    this.name           = name;
-    this.image          = new Image();
-    this.image.src      = image;
-    this.image.onload   = this.imageOnload;
-}*/
 function Tile(tileType)
 {
     // these values are default
@@ -55,10 +37,11 @@ function Tile(tileType)
     objects.push(this);
     
     if (tileType.buildingType) {
-        this.building   = new Building(tileType.buildingType, 0);
+        this.building       = new Building(tileType.buildingType, 0);
+        this.building.tile  = this;
         objects.push(this.building);
     } else {
-        this.building   = false;
+        this.building       = false;
     }
     this.incidence      = tileType.incidence;
 }
