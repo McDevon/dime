@@ -14,12 +14,12 @@ Dime-kurssin projektityö
 - Kuvat (ehkä väliaikaiset) rakennuksille
 - Rakennukset näkyvät tiilien päällä
 - Yksiköt näkyviin
+- Yksiköiden pathfinder
+- Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
 
 ## Todo
 
-- Yksiköiden pathfinder
 - Yksiköiden 'tekoäly' ja taistelu
-- Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
 - Uuden laatan sijoittaminen
 - Rakennusten ostaminen ja rakentaminen (tarvitaanko rakentajayksikköä?)
 - Yksiköiden ostaminen rakennuksista
