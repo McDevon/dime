@@ -16,14 +16,19 @@ Dime-kurssin projektityö
 - Yksiköt näkyviin
 - Yksiköiden pathfinder
 - Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
+- Gathererin tekoäly
 
 ## Todo
 
 - Yksiköiden 'tekoäly' ja taistelu
 - Uuden laatan sijoittaminen
-- Rakennusten ostaminen ja rakentaminen (tarvitaanko rakentajayksikköä?)
+- Rakennusten ostaminen ja rakentaminen (gathererit rakentavat rakennukset valmiiksi kuten AoE:ssa)
 - Yksiköiden ostaminen rakennuksista
 - Osittain rikkinäisen rakennuksen korjaaminen
+- GUI esittämään tietoa valitusta laatasta
+    - Sekä ostamaan yksiköitä valitun laatan rakennuksesta
+- GUI esittämään pelaajan raha- yms. tilanteen
+- GUI rakennusten ostamista varten
 
 ## Synopsis
 
