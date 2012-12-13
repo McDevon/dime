@@ -141,31 +141,44 @@ Unit.prototype.control = function() {
             this.x += this.xSpeed;
             this.y += this.ySpeed;
             
-            this.distance -= refreshRate * tileSize * this.unitType.speed;
+            this.distance -= refreshRate * tileSize * (this.path[0].passability / 100) * this.unitType.speed;
             
             if (this.distance <= 0) {
                 this.targetReached = true;
                 
+                // Remove unit from previous tile and add to current tile
+                for (var i = 0; i < this.tile.units.length; i++) {
+                    if (this.tile.units[i] === this) {
+                        this.tile.units.splice[i,1];
+                        break;
+                    } 
+                }
+                
                 // Remove tile from path
                 if (this.path.length > 0) {
+                    this.path[0].units.push(this);
+                    this.tile = this.path[0];
                     this.path.splice(0,1);
                 }
-            }
+                
+             }
         }
         
         // Third, if target is set and not there but reached some tile, start moving there via route calculated
         if (this.targetReached && this.targetTile && this.targetTile !== this.tile) {
+            var nextTile = this.path[0];
+            
             // Get new target point in next square
             var target = this.createRelativePoint(this.path[0]);
             
-            this.xTarget = this.tile.x + target.x;
-            this.yTarget = this.tile.y + target.y;
+            this.xTarget = nextTile.x + target.x;
+            this.yTarget = nextTile.y + target.y;
             
             this.targetReached = false;
             
-            var angle = Math.atan2(this.xTarget - this.x, this.yTarget - this.y);
-            this.xSpeed = refreshRate * tileSize * this.unitType.speed * Math.cos(angle);
-            this.ySpeed = refreshRate * tileSize * this.unitType.speed * Math.sin(angle);
+            var angle = Math.atan2(this.yTarget - this.y, this.xTarget - this.x);
+            this.xSpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.cos(angle);
+            this.ySpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.sin(angle);
             
             this.distance = Math.sqrt(Math.pow(this.xTarget - this.x, 2) + Math.pow(this.yTarget - this.y, 2));
         }
