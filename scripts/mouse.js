@@ -86,12 +86,12 @@ document.getElementById("game").onmouseup = function(e) {
             clickedObject.exists = false;
         }
     }
-}
+};
 
 document.onmouseup = function(e) {
     clickedObject = null;
     mouseDown = false;
-}
+};
 
 document.onmousemove = function(e) {
     if (mouseRefresh) {
@@ -126,7 +126,7 @@ document.onmousemove = function(e) {
         
         mouseRefresh = false;
     }
-}
+};
 
 //adding the event listerner for Mozilla
 if(window.addEventListener) {
@@ -174,7 +174,7 @@ document.getElementById("game").addEventListener('touchmove', ipadScroll, false)
 document.getElementById("game").ontouchstart = function(e){ 
     xPadPrev = false;
     yPadPrev = false;
-}
+};
 
 var xPadPrev = false;
 var yPadPrev = false;

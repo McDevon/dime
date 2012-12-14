@@ -114,7 +114,7 @@ Tile.prototype.changeOwner = function (newOwner) {
         this.building.owner = newOwner;
     }
 };
-Tile.prototype.coordinates = function() {
+Tile.prototype.coordinates = function() {
     return { x:this.xGrid, y:this.yGrid };
     //return { x:this.x / this.width, y:this.y / this.height };
 };

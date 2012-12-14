@@ -161,7 +161,7 @@ Unit.prototype.control = function() {
                     
             // Check if wanted type of place can be found
             while (!this.path && iter > 0) {
-                if (targetAreaType <= 0) { targetAreaType = 3 };
+                if (targetAreaType <= 0) { targetAreaType = 3; }
                 switch (targetAreaType) {
                     case 1:
                         this.path = this.getPathToNearestTile(function(target) { return target.berries > 0; });
@@ -299,7 +299,7 @@ Unit.prototype.control = function() {
                 // When done, figure out something else to do
                 if (this.tile.building.hp >= this.tile.building.buildingType.hp) {
                     
-                    this.tile.building.hp = this.tile.building.buildingType.hp
+                    this.tile.building.hp = this.tile.building.buildingType.hp;
                     this.targetTile = false;
                 }
             }
