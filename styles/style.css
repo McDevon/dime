@@ -58,3 +58,20 @@ canvas {
     border:             1px solid #000000;
 }
 
+#player_info {
+    padding:            5px 5px 5px 5px;
+    margin-top:         5px;
+    margin-left:        10px;
+    background-color:   #FFEAC2;
+    display:            inline;
+}
+
+#player_name {
+	font-size:          1.4em;
+	font-weight:        bold;
+	text-decoration:    underline;
+}
+
+#berry_count, #mushroom_count {
+	font-weight:        bold;
+}

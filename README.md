@@ -17,6 +17,7 @@ Dime-kurssin projektityö
 - Yksiköiden pathfinder
 - Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
 - Gathererin tekoäly
+- GUI esittämään pelaajan raha- yms. tilanteen
 
 ## Todo
 
@@ -27,7 +28,6 @@ Dime-kurssin projektityö
 - Osittain rikkinäisen rakennuksen korjaaminen
 - GUI esittämään tietoa valitusta laatasta
     - Sekä ostamaan yksiköitä valitun laatan rakennuksesta
-- GUI esittämään pelaajan raha- yms. tilanteen
 - GUI rakennusten ostamista varten
 
 ## Synopsis
