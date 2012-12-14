@@ -303,6 +303,10 @@ Unit.prototype.control = function() {
                     this.targetTile = false;
                 }
             }
+            // If doing nothing here, get next instructions
+            else if (!gathering) {
+                this.targetTile = false;
+            }
         }
     }
     
