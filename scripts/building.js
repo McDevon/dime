@@ -32,13 +32,13 @@ function Building(buildingType, owner) {
     this.owner          = owner;
 }
 
-Building.prototype.draw = function(context, xOffset, yOffset) {
+Building.prototype.draw = function(drawContext, xOffset, yOffset) {
     // Only draw if the image is on screen
     if (this.x + this.width > xOffset
         && this.y + this.height > yOffset
         && this.x < xOffset + xCanvasSize
         && this.y < yOffset + yCanvasSize) {
-        context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
+        drawContext.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
     }
 };
 Building.prototype.setPosition = function(x, y) {
@@ -91,7 +91,7 @@ Building.prototype.spawnUnits = function(amount) {
             unit.homeTile = this.owner.homeTile;
         }
         
-        units.push(unit);
+        map.units.push(unit);
     }
     
 }; 

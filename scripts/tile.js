@@ -43,13 +43,10 @@ function Tile(tileType)
     
     this.building       = false;
     
-    // Add to drawn objects
-    objects.push(this);
-    
     if (tileType.buildingType) {
         this.building       = new Building(tileType.buildingType, 0);
         this.building.tile  = this;
-        objects.push(this.building);
+        map.buildings.push(this.building);
     }
     this.incidence      = tileType.incidence;
 }
@@ -68,7 +65,7 @@ Tile.prototype.imageOnload = function() {
     m_context.drawImage(this.image, 0, 0);
     this.image = m_canvas;*/
 };
-Tile.prototype.setPosition = function(x, y) {
+Tile.prototype.setPosition = function(grid, x, y) {
     // If Tiles can be moved at some point, first remove from grid
     
     // Given position is tile position, not pixel position
@@ -84,7 +81,7 @@ Tile.prototype.setPosition = function(x, y) {
     }
     
     // Mark tile to grid
-    grid[y*yAreaSize+x] = this;
+    grid.set(x, y, this);
 };
 Tile.prototype.containsPoint = function(x, y) {
     if (x < this.x
@@ -100,13 +97,13 @@ Tile.prototype.setPixelPosition = function(x, y) {
     this.y  = y;
 };
 Tile.prototype.animate = function() {};
-Tile.prototype.draw = function(context, xOffset, yOffset) {
+Tile.prototype.draw = function(drawContext, xOffset, yOffset) {
     // Only draw if the image is on screen
     if (this.x + this.width > xOffset
         && this.y + this.height > yOffset
         && this.x < xOffset + xCanvasSize
         && this.y < yOffset + yCanvasSize) {
-        context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
+        drawContext.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
     }
 };
 Tile.prototype.changeOwner = function (newOwner) { 
@@ -128,18 +125,5 @@ Tile.prototype.distanceTo = function(tile) {
     return Math.sqrt(Math.pow(this.xGrid - tile.xGrid, 2) + Math.pow(this.yGrid - tile.yGrid, 2));
 };
 Tile.prototype.neighbours = function() {
-    var table = [];
-    if (this.xGrid > 0 && grid[this.yGrid*yAreaSize+(this.xGrid - 1)]) {
-        table.push(grid[this.yGrid*yAreaSize+(this.xGrid - 1)]);
-    }
-    if (this.yGrid > 0 && grid[(this.yGrid - 1)*yAreaSize+this.xGrid]) {
-        table.push(grid[(this.yGrid - 1)*yAreaSize+this.xGrid]);
-    }
-    if (this.xGrid < (xAreaSize - 1) && grid[this.yGrid*yAreaSize+(this.xGrid + 1)]) {
-        table.push(grid[this.yGrid*yAreaSize+(this.xGrid + 1)]);
-    }
-    if (this.yGrid < (yAreaSize - 1) && grid[(this.yGrid + 1)*yAreaSize+this.xGrid]) {
-        table.push(grid[(this.yGrid + 1)*yAreaSize+this.xGrid]);
-    }
-    return table;
+    return map.neighbours(this.xGrid, this.yGrid);
 };

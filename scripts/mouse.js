@@ -52,14 +52,8 @@ document.getElementById("game").onmousedown = function(e) {
 	var x = currentMouseXPosition(e) - currentCanvasXOffset();
 	var y = currentMouseYPosition(e) - currentCanvasYOffset();
 	
-    for (var i = 0; i < objects.length; i++) {
-        var object = objects[i];
-        
-        // Remove object if clicked on it
-        if (object.exists && object.containsPoint(x + xOffset,y + yOffset)) {
-            clickedObject = object;
-        }
-    }    
+    var object = map.getObjectAtPoint(x + xOffset, y + yOffset);
+    if (object) clickedObject = object;
     
     mouseDown = true;
     

@@ -327,12 +327,12 @@ Unit.prototype.generatePathTo = function(goal) {
     var nodes = [];
     
     // Create an array of tiles
-    for (var i = 0; i < grid.length; i++) {
-        if (grid[i]) {
+    for (var i = 0; i < map.grid.gridArray.length; i++) {
+        if (map.grid.gridArray[i]) {
             nodes.push(grid[i]);
-            grid[i].f_score = goal.distanceTo(grid[i]);
-            grid[i].g_score = startTile.distanceTo(grid[i]);
-            grid[i].previousTile = false;
+            map.grid.gridArray[i].f_score = goal.distanceTo(map.grid.gridArray[i]);
+            map.grid.gridArray[i].g_score = startTile.distanceTo(map.grid.gridArray[i]);
+            map.grid.gridArray[i].previousTile = false;
         }
     }
     
@@ -409,11 +409,11 @@ Unit.prototype.getPathToNearestTile = function(isTarget) {
     var target = false;
     
     // Create an array of tiles
-    for (var i = 0; i < grid.length; i++) {
-        if (grid[i]) {
-            nodes.push(grid[i]);
-            grid[i].g_score = 100001;       // Close enough
-            grid[i].previousTile = false;
+    for (var i = 0; i < map.grid.gridArray.length; i++) {
+        if (map.grid.gridArray[i]) {
+            nodes.push(map.grid.gridArray[i]);
+            map.grid.gridArray[i].g_score = 100001;       // Close enough
+            map.grid.gridArray[i].previousTile = false;
         }
     }
     
@@ -441,7 +441,6 @@ Unit.prototype.getPathToNearestTile = function(isTarget) {
         if (current.g_score > 100000) {
             break;
         }
-        
         var neighbours = current.neighbours();
         for (var i = 0; i < neighbours.length; i++) {
             var neighbour = neighbours[i];

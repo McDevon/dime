@@ -5,18 +5,22 @@ var context = canvas.getContext("2d");
 
 // Game settings
 var refreshRate = 1/20;     // Canvas refresh rate in seconds
-var tileSize    = 80;       // Tile size
-var xAreaSize   = 21;       // Game area size in tiles
+var tileSize    = 80;       // Width/height of a tile in pixels
+var xAreaSize   = 21;
 var yAreaSize   = 21;
+
 var xCanvasSize = canvas.getAttribute("width");
 var yCanvasSize = canvas.getAttribute("height");
+
+// Create the game area. Parameters: tileSize, width, height
+var map = new Map();
 
 // Game state as global variables
 var gameTime    = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
 var playerLocal = false;
-var plauerAI    = false;
+var playerAI    = false;
 
 // Visual state
 var xOffset     = 0.0;
@@ -71,47 +75,6 @@ window.requestAnimFrame = (function(){
           };
 })();
 
-/* 
- *  All drawn objects live in 'objects' array
- *  Except for units, who are located in 'units' array for faster search and to be drawn always on top of other items
- *  The 'grid' is the game map
- */
-var objects = [];
-var grid    = [];
-var units   = [];
-
-// Make sure to have both of these at startup
-var berriesGenerated = false;
-var shroomsGenerated = false;
-
-// Simple recursive random map generation for game start
-function raiseLand(x, y, resume, startPoint) {
-    //console.log("x: " + x + " y: " + y + " res: " + resume + " start: " + startPoint);
-    if (x >= 0 && y >= 0 && x < xAreaSize && y < yAreaSize && (grid[y*yAreaSize+x] == false || !grid[y*yAreaSize+x] ) && Math.random() * 100.0 < resume) {
-        // Get random tile if not startPoint
-        var type;
-        if (startPoint) { type = tileTypes[6]; }
-        else {
-            // Really simple type randomization
-            var rand = Math.random() * 100.0;
-            if (rand < 40) { type = tileTypes[0]; }
-            else if (rand < 70) { type = tileTypes[1]; }
-            else if (rand < 90) { type = tileTypes[2]; }
-            else if (rand < 95) { type = tileTypes[3]; shroomsGenerated = true;}
-            else { type = tileTypes[4]; berriesGenerated = true;}
-        }
-        //console.log("New tile: " + type.name);
-        var tile = new Tile(type);
-        tile.setPosition(x, y);
-        
-        // Recursion to every direction
-        raiseLand(x - 1, y, resume - 15, false);
-        raiseLand(x + 1, y, resume - 15, false);
-        raiseLand(x, y - 1, resume - 15, false);
-        raiseLand(x, y + 1, resume - 15, false);
-    }
-}
-
 // Reset canvas area
 function resetGame() {
 	context.clearRect(0,0,xCanvasSize,yCanvasSize);
@@ -129,29 +92,9 @@ function resetGame() {
     playerLocal.berries = 100;
     playerLocal.shrooms = 100;
     
-    // Create starting area with berries and mushrooms
-    do {
-        grid    = [];
-        objects = [];
-        units   = [];
-        berriesGenerated = false;
-        shroomsGenerated = false;
-        raiseLand(Math.floor(xAreaSize / 2), Math.floor(yAreaSize / 2), 100, true);
-    } while (!!!berriesGenerated || !!!shroomsGenerated);
+    // Build the map
+    map.reset();
     
-    // Add some units for player
-    var homeTile = grid[Math.floor(yAreaSize / 2)*yAreaSize+Math.floor(xAreaSize / 2)];
-    if (homeTile) {
-        if (homeTile.building) {
-            homeTile.building.owner = playerLocal;
-            
-            // Spawn two gatherers
-            homeTile.building.spawnUnits(2);
-            
-            // Set player home tile
-            playerLocal.homeTile = homeTile;
-        }
-    }
 }
 
 var clickedObject = null;
@@ -165,12 +108,7 @@ function mainLoop() {
     // Refresh timer and run the game (not when waiting for player to place a tile)
     if (!selecting) {
         gameTime += refreshRate;
-        
-        // Move all units
-        for (var i = 0; i < units.length; i++) {
-            var object = units[i];
-            object.control();
-        }
+        map.moveUnits();
     }
         
     // Give chance to put the next tile somewhere
@@ -194,37 +132,7 @@ function draw() {
     m_canvas.height = yCanvasSize;
     var m_context   = m_canvas.getContext("2d");
     
-    // Draw all objects
-    for (var i = 0; i < objects.length; i++) {
-        var object = objects[i];
-        
-        // Remove object if marked destroyed
-        if ( !!! object.exists) {
-            objects.splice(i, 1);
-            i--;
-        }
-        // Draw object if it exists
-        else {
-            //object.animate();
-            object.draw(m_context, xOffset, yOffset);
-        }
-    }
-    // Draw all units
-    for (var i = 0; i < units.length; i++) {
-        var object = units[i];
-        
-        // Remove object if marked destroyed
-        if ( !!! object.exists) {
-            units.splice(i, 1);
-            i--;
-        }
-        // Animate and draw object if it exists
-        else {
-            object.animate();
-            object.draw(m_context, xOffset, yOffset);
-        }
-    }
-    
+    map.draw(m_context);
     drawBorders(m_context);
     drawCursor(m_context);
     
