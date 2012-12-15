@@ -74,10 +74,10 @@ document.getElementById("game").onmouseup = function(e) {
     if (Math.abs(x - xMouseStart) < 5
         && Math.abs(y - yMouseStart) < 5) {
         
-        // Clicking an still now removes it
         if (clickedObject != null
-            && clickedObject.containsPoint(x + xOffset,y + yOffset)) {
-            clickedObject.exists = false;
+            && clickedObject.containsPoint(x + xOffset,y + yOffset))
+        {
+            clickedObject.displayInfo();
         }
     }
 };

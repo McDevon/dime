@@ -29,6 +29,19 @@
         <section id="main">
             <div><p id="player_info"><span id="player_name"></span> Berries: <span id="berry_count"></span> Mushrooms: <span id="mushroom_count"></span></p></div>
             <canvas id="game" width="700" height="500" ></canvas>
+            <div id="tile_info">
+                <button id="close_tile_info" onclick="closeTileInfo()">Close</button>
+                <p>Tile type: <span class="tile_info_value" id="tile_type"></span></p>
+                <div id="building_info_frame">
+                    Building: <div id="building_info"><span class="tile_info_value" id="building_name"></span><img id="building_image" src="" /></div>
+                </div>
+                <div id="start_building">
+                    <p>Choose what to construct on this tile: </p>
+                </div>
+                <div id="cannot_build">
+                    <p>You can't build on this tile.</p>
+                </div>
+            </div>
             <p>
                 <button id="resetButton" onclick="resetGame()">Resetoi peli</button>
             </p>

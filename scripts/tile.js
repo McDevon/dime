@@ -127,3 +127,27 @@ Tile.prototype.distanceTo = function(tile) {
 Tile.prototype.neighbours = function() {
     return map.neighbours(this.xGrid, this.yGrid);
 };
+
+Tile.prototype.displayInfo = function() {
+    $("#tile_type").text(this.name);
+    $("#building_info_frame").hide();
+    $("#start_building").hide();
+    $("#cannot_build").hide();
+
+    if (this.building) {
+        $("#building_name").text(this.building.buildingType.name);
+        $("#building_image").attr("src", this.building.image.src);
+        $("#building_info_frame").show();
+    } else if (this.buildable) {
+        $("#start_building").show();
+    } else {
+        $("#cannot_build").show();
+    }
+
+    $("#tile_info").show();
+
+};
+
+function closeTileInfo() {
+    $("#tile_info").hide();
+}

@@ -75,3 +75,41 @@ canvas {
 #berry_count, #mushroom_count {
 	font-weight:        bold;
 }
+
+#tile_info {
+	width:              500px;
+	height:             300px;
+	position:           absolute;
+	left:               100px;
+	top:                100px;
+	background-color:   #FFEAC2;
+	border:             1px solid #000000;
+	display:            none;
+	padding:            5px 5px 5px 5px;
+}
+
+#close_tile_info {
+	float: right;
+}
+
+.tile_info_value {
+	font-weight:        bold;
+}
+
+#building_info_frame {
+	display:            none;
+	border:             1px solid #000000;
+	margin-top:         5px;
+}
+
+#start_building {
+	display:            none;
+}
+
+#cannot_build {
+	display:            none;
+}
+
+#building_info {
+
+}
