@@ -20,6 +20,8 @@ var gameTime    = 0.0;
 var roundTime   = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
+var roundLength = 3.0;     // How often player gets to place a tile (seconds)
+
 var playerLocal = false;
 var playerAI    = false;
 
@@ -110,11 +112,11 @@ function mainLoop() {
     if (!selecting) {
         gameTime += refreshRate;
         roundTime += refreshRate;
-        map.moveUnits();
+        map.control();
     }
         
     // Give chance to put the next tile somewhere
-    if (roundTime > 2) {
+    if (roundTime > roundLength && map.tileToPlace) {
         selecting = true;
         roundTime = 0;
     }
@@ -188,7 +190,6 @@ function drawCursor(context) {
             if (map.tileToPlace.building) {
                 map.tileToPlace.building.draw(context, xOffset, yOffset);
             }
-            console.log("x: " + map.tileToPlace.x);
         }
         else {
             // red

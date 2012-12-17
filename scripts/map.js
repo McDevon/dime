@@ -26,6 +26,16 @@ function Grid() {
     };
 }
 
+Grid.prototype.getTileCount = function()
+{
+    var count = 0;
+    for (var i = 0; i < this.gridArray.length; i++) {
+        if (this.gridArray[i]) count++;
+    }
+    //console.log("Tile count on grid: " + count);
+    return count;
+};
+
 //Make sure to have both of these at startup
 var berriesGenerated = false;
 var shroomsGenerated = false;
@@ -125,9 +135,13 @@ Map.prototype.neighbours = function(x, y) {
 };
 
 /// Move all units
-Map.prototype.moveUnits = function() {
+Map.prototype.control = function() {
     for (var i = 0; i < this.units.length; i++) {
         var object = this.units[i];
+        object.control();
+    }  
+    for (var i = 0; i < this.buildings.length; i++) {
+        var object = this.buildings[i];
         object.control();
     }  
 };
@@ -144,6 +158,13 @@ Map.prototype.getObjectAtPoint = function(x, y) {
 };
 
 Map.prototype.newTileToPlace = function() {
+    // Don't try to give a new tile to place if game area is full
+    var maxTiles = xAreaSize * yAreaSize;
+    if (this.grid.getTileCount() >= maxTiles) {
+        this.tileToPlace = false;
+        return;
+    }
+    
     // Create a random tile
     var cValue = Math.random() * tileIncidenceSum;
     

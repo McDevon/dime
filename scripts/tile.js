@@ -82,7 +82,7 @@ Tile.prototype.setPosition = function(grid, x, y) {
     // Mark tile to grid
     if (grid) {
         grid.set(x, y, this);
-        map.buildings.push(this.building);
+        if (this.building) map.buildings.push(this.building);
     }
 };
 Tile.prototype.containsPoint = function(x, y) {

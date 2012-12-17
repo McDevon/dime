@@ -21,6 +21,7 @@ function Building(buildingType, owner) {
     this.width          = tileSize / 2.0;
     this.height         = tileSize / 2.0;
     this.tile           = false;
+    this.spawnTimer     = 0.0;
 
     this.image          = new Image();
     this.image.src      = buildingType.image;
@@ -97,3 +98,13 @@ Building.prototype.spawnUnits = function(amount) {
 }; 
 
 Building.prototype.animate = function() {};
+
+Building.prototype.control = function() {
+    this.spawnTimer += refreshRate;
+    
+    // Spawn units when it's time
+    if (this.spawnTimer >= 1.0 / this.buildingType.spawningRate) {
+        this.spawnUnits(1);
+        this.spawnTimer = 0;
+    }
+};
