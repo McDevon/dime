@@ -53,7 +53,7 @@ var tileTypes = [
     new TileType("images/mountain.png", "Mountain", false, 20, 0, 0, false, 30),
     new TileType("images/shroomforest.png", "Mushroom forest", false, 60, 0, 1000, false, 20),
     new TileType("images/berryforest.png", "Berry forest", false, 60, 1000, 0, false, 20),
-    new TileType("images/forest.png", "Bear forest", false, 60, 5, 0, buildingTypes[0], 10),
+    new TileType("images/forest.png", "Bear forest", false, 60, 5, 0, buildingTypes[0], 50),
     new TileType("images/land1.png", "Town center", true, 100, 0, 0, buildingTypes[2], 0),
     ];
 
@@ -195,7 +195,6 @@ function drawCursor(context) {
             context.strokeStyle = "#FF0000";
         }
     }
-
 
     // Draw current square
     context.lineWidth = 5;

@@ -143,10 +143,19 @@ Map.prototype.getObjectAtPoint = function(x, y) {
     return false;
 };
 
-Map.prototype.givePlaceableTile = function() {
-    // Give the user a tile to place on the map
-    //selecting = true;
+Map.prototype.newTileToPlace = function() {
+    // Create a random tile
+    var cValue = Math.random() * tileIncidenceSum;
     
+    // Simple weighted randomization
+    var i = 0;
+    while (cValue > tileTypes[i].incidence) {
+        cValue -= tileTypes[i].incidence;
+        i++;
+    }
+    
+    // Tile type selected, set it
+    this.tileToPlace = new Tile(tileTypes[i]);
     
 };
 

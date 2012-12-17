@@ -74,7 +74,23 @@ document.getElementById("game").onmouseup = function(e) {
     if (Math.abs(x - xMouseStart) < 5
         && Math.abs(y - yMouseStart) < 5) {
         
-        if (clickedObject != null
+        // Selecting a place for a new tile
+        if (selecting) {
+            var xTile = Math.floor((xMouse - xMouse % tileSize) / tileSize);
+            var yTile = Math.floor((yMouse - yMouse % tileSize) / tileSize);
+            // Check if position is usable, i.e. empty and has some other tile next to it
+            if (!map.grid.get(xTile, yTile) && map.neighbours(xTile, yTile).length > 0) {
+                // Put tile to grid
+                map.tileToPlace.setPosition(map.grid, xTile, yTile);
+                // Generate new random tile to place next time
+                map.newTileToPlace();
+                // Done selecting, resume game
+                selecting = false;
+                
+            }
+        }
+        // Clicking a tile
+        else if (clickedObject != null
             && clickedObject.containsPoint(x + xOffset,y + yOffset))
         {
             clickedObject.displayInfo();
