@@ -114,7 +114,7 @@ Unit.prototype.animate = function() {};
 Unit.prototype.control = function() {
 
     // Gatherer ai
-    if (this.unitType.name == "gatherer") {
+    if (this.unitType.name == "Gatherer") {
         
         // First, watch for enemies. If one found in same tile, return to base, unless already at base or going there
         if (this.targetTile !== this.homeTile) {

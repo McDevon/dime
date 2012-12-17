@@ -17,6 +17,7 @@ var map = new Map();
 
 // Game state as global variables
 var gameTime    = 0.0;
+var roundTime   = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
 var playerLocal = false;
@@ -29,17 +30,17 @@ var borders     = [false, false, false, false]; // Stoppers for left, up, right,
 
 // Different unit types
 var unitTypes = [
-    new UnitType("images/villager.png", "gatherer", 50, 1, 10, 5, 20),
-    new UnitType("images/bear.png", "bear", 100, 0.5, 20, 5, 0),
+    new UnitType("images/villager.png", "Gatherer", 50, 1, 10, 5, 20),
+    new UnitType("images/bear.png", "Bear", 100, 0.5, 20, 5, 0),
     ];
 
 // Different building types
 var buildingTypes = [
-    new BuildingType ("images/bearcave.png", "bear cave", 2000, unitTypes[1], 0.1, 0, false, false, 0, 0),
-    new BuildingType ("images/tower.png", "defence tower", 500, false, 0, 0, false, false, 1, 20),
-    new BuildingType ("images/towncenter.png", "town hub", 5000, unitTypes[0], 0, 10, true, true, 2, 10),
-    new BuildingType ("images/berryhut.png", "berry hut", 1000, false, 0, 0, true, false, 0, 0),
-    new BuildingType ("images/shroomhut.png", "shroom basket", 1000, false, 0, 0, false, true, 0, 0),
+    new BuildingType ("images/bearcave.png", "Bear cave", 2000, unitTypes[1], 0.1, 0, false, false, 0, 0),
+    new BuildingType ("images/tower.png", "Defence tower", 500, false, 0, 0, false, false, 1, 20),
+    new BuildingType ("images/towncenter.png", "Town hub", 5000, unitTypes[0], 0, 10, true, true, 2, 10),
+    new BuildingType ("images/berryhut.png", "Berry hut", 1000, false, 0, 0, true, false, 0, 0),
+    new BuildingType ("images/shroomhut.png", "Shroom basket", 1000, false, 0, 0, false, true, 0, 0),
     ];
 
 // Different tile areas
@@ -47,13 +48,13 @@ var buildingTypes = [
     //  UnitType (name, hp, speed, attack, defence)
     //  BuildingType (name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower)
 var tileTypes = [
-    new TileType("images/land2.png", "grass", true, 100, 0, 0, false, 80),
-    new TileType("images/plains.png", "plains", true, 90, 0, 0, false, 60),
-    new TileType("images/mountain.png", "mountain", false, 20, 0, 0, false, 30),
-    new TileType("images/shroomforest.png", "mushroom forest", false, 60, 0, 1000, false, 20),
-    new TileType("images/berryforest.png", "berry forest", false, 60, 1000, 0, false, 20),
-    new TileType("images/forest.png", "bear forest", false, 60, 5, 0, buildingTypes[0], 10),
-    new TileType("images/land1.png", "start tile", true, 100, 0, 0, buildingTypes[2], 0),
+    new TileType("images/land2.png", "Grass", true, 100, 0, 0, false, 80),
+    new TileType("images/plains.png", "Plains", true, 90, 0, 0, false, 60),
+    new TileType("images/mountain.png", "Mountain", false, 20, 0, 0, false, 30),
+    new TileType("images/shroomforest.png", "Mushroom forest", false, 60, 0, 1000, false, 20),
+    new TileType("images/berryforest.png", "Berry forest", false, 60, 1000, 0, false, 20),
+    new TileType("images/forest.png", "Bear forest", false, 60, 5, 0, buildingTypes[0], 10),
+    new TileType("images/land1.png", "Town center", true, 100, 0, 0, buildingTypes[2], 0),
     ];
 
 // Count sum of tile incidences for randomization calculations
@@ -108,12 +109,14 @@ function mainLoop() {
     // Refresh timer and run the game (not when waiting for player to place a tile)
     if (!selecting) {
         gameTime += refreshRate;
+        roundTime += refreshRate;
         map.moveUnits();
     }
         
     // Give chance to put the next tile somewhere
-    if (gameTime % 60 == 0) {
+    if (roundTime > 2) {
         selecting = true;
+        roundTime = 0;
     }
     
     // Recall mainLoop after refreshRate seconds
@@ -167,15 +170,35 @@ function drawBorders(context) {
 }
 
 function drawCursor(context) {
-    // blue
-    context.strokeStyle = "#0000FF";
-    
-    // Draw current square
-    context.lineWidth = 5;
-    
     // Get position
     var xPos = xMouse - xMouse % tileSize;
     var yPos = yMouse - yMouse % tileSize;
+    
+    // blue
+    context.strokeStyle = "#0000FF";
+
+    // If selection under way, show the tile also
+    if (selecting) {
+        var x = Math.floor(xPos / tileSize);
+        var y = Math.floor(yPos / tileSize);
+        // Check if position is usable, i.e. empty and has some other tile next to it
+        if (!map.grid.get(x, y) && map.neighbours(x, y).length > 0) {
+            map.tileToPlace.setPosition(false, x, y);
+            map.tileToPlace.draw(context, xOffset, yOffset);
+            if (map.tileToPlace.building) {
+                map.tileToPlace.building.draw(context, xOffset, yOffset);
+            }
+            console.log("x: " + map.tileToPlace.x);
+        }
+        else {
+            // red
+            context.strokeStyle = "#FF0000";
+        }
+    }
+
+
+    // Draw current square
+    context.lineWidth = 5;
     
     // Draw tile
     context.moveTo(xPos - xOffset,yPos - yOffset);
@@ -184,7 +207,7 @@ function drawCursor(context) {
     context.lineTo(xPos - xOffset,yPos - yOffset + tileSize);
     context.lineTo(xPos - xOffset,yPos - yOffset - 2.5);
     context.stroke();
-
+    
 }
 
 // Wait for loading to finish, then let's go

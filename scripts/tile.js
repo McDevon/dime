@@ -46,7 +46,6 @@ function Tile(tileType)
     if (tileType.buildingType) {
         this.building       = new Building(tileType.buildingType, 0);
         this.building.tile  = this;
-        map.buildings.push(this.building);
     }
     this.incidence      = tileType.incidence;
 }
@@ -81,7 +80,10 @@ Tile.prototype.setPosition = function(grid, x, y) {
     }
     
     // Mark tile to grid
-    grid.set(x, y, this);
+    if (grid) {
+        grid.set(x, y, this);
+        map.buildings.push(this.building);
+    }
 };
 Tile.prototype.containsPoint = function(x, y) {
     if (x < this.x

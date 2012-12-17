@@ -2,8 +2,11 @@
 /// Represents the game map, including the tiles and buildings on it
 function Map() {
 
-    this.buildings = [];
-    this.units   = [];
+    this.buildings      = [];
+    this.units          = [];
+    
+    // The tile player gets to place on map
+    this.tileToPlace    = false;
     
     /// The tiles forming the map
     this.grid = new Grid();
@@ -51,6 +54,9 @@ Map.prototype.reset = function()
         // Set player home tile
         playerLocal.homeTile = homeTile;
     }
+    
+    // The first tile player gets to place is a bear cave
+    this.tileToPlace = new Tile(tileTypes[5]);
 };
 
 //Simple recursive random map generation for game start
@@ -95,7 +101,7 @@ Map.prototype.draw = function(drawContext) {
     var objects = this.grid.gridArray.concat(this.buildings).concat(this.units);
     for (var i = 0; i < objects.length; i++) {
         if (!objects[i]) continue;
-        objects[i].animate();
+        //objects[i].animate();
         objects[i].draw(drawContext, xOffset, yOffset);
     }
 };
@@ -135,6 +141,13 @@ Map.prototype.getObjectAtPoint = function(x, y) {
         }
     }
     return false;
+};
+
+Map.prototype.givePlaceableTile = function() {
+    // Give the user a tile to place on the map
+    //selecting = true;
+    
+    
 };
 
 function removeNonExistentObjects(objects, splice) {
