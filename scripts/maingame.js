@@ -20,7 +20,7 @@ var gameTime    = 0.0;
 var roundTime   = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
-var roundLength = 3.0;     // How often player gets to place a tile (seconds)
+var roundLength = 30.0;     // How often player gets to place a tile (seconds)
 
 var playerLocal = false;
 var playerAI    = false;
@@ -84,6 +84,7 @@ function resetGame() {
     
     // Reset game state
     gameTime    = 0.0;
+    roundTime   = 0.0;
     xOffset     = (tileSize * xAreaSize) / 2 - (xCanvasSize / 2);
     yOffset     = (tileSize * yAreaSize) / 2 - (yCanvasSize / 2);
     borders     = [false, false, false, false];

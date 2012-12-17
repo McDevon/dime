@@ -82,6 +82,7 @@ Tile.prototype.setPosition = function(grid, x, y) {
     // Mark tile to grid
     if (grid) {
         grid.set(x, y, this);
+        // Add buildings to map here, as their drawing is done elsewhere until they are added to the grid
         if (this.building) map.buildings.push(this.building);
     }
 };

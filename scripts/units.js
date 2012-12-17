@@ -21,6 +21,8 @@ function Unit(unitType, owner)
     this.collectSpeed   = 5;    // Collect speed of items / sec
     this.repairSpeed    = 10;   // Speed of reapiring and building buildings. hp / sec
     
+    this.actionTimer    = 0.0;  // Timer for (attacking and) decision making
+    
     // Movement
     this.xSpeed         = 0.0;
     this.ySpeed         = 0.0;
@@ -29,6 +31,8 @@ function Unit(unitType, owner)
     this.distance       = 0.0;
     this.targetTile     = false;
     this.targetReached  = true;
+    
+    this.attackTarget   = false;
     
     this.exists         = true;     // Switch this to false to destroy object
     this.width          = tileSize / 4.0;
@@ -113,11 +117,67 @@ Unit.prototype.animate = function() {};
 // AI pass for object, also the moving happens here
 Unit.prototype.control = function() {
 
+    // Sometimes we just wait
+    if (this.actionTimer > 0.0) {
+        this.actionTimer -= refreshRate;
+        return;
+    }
+
+    // General AI movement
+    if (this.targetReached && this.targetTile && this.targetTile !== this.tile) {
+        var nextTile = this.path[0];
+        
+        // Get new target point in next square
+        var target = this.createRelativePoint(this.path[0]);
+        
+        this.xTarget = nextTile.x + target.x;
+        this.yTarget = nextTile.y + target.y;
+        
+        this.targetReached = false;
+        
+        var angle = Math.atan2(this.yTarget - this.y, this.xTarget - this.x);
+        this.xSpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.cos(angle);
+        this.ySpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.sin(angle);
+        
+        this.distance = Math.sqrt(Math.pow(this.xTarget - this.x, 2) + Math.pow(this.yTarget - this.y, 2));
+    }
+    // Move, if on route
+    if (!!! this.targetReached) {
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+        
+        this.distance -= refreshRate * tileSize * (this.path[0].passability / 100) * this.unitType.speed;
+        
+        if (this.distance <= 0) {
+            this.targetReached = true;
+            
+            // Remove unit from previous tile and add to current tile
+            for (var i = 0; i < this.tile.units.length; i++) {
+                if (this.tile.units[i] === this) {
+                    this.tile.units.splice(i,1);
+                    //i--;
+                    break;
+                } 
+            }
+            
+            // Remove tile from path
+            if (this.path.length > 0) {
+                
+                // TODO: Could change current tile when crossing the tile line.
+                this.path[0].units.push(this);
+                this.tile = this.path[0];
+                
+                this.path.splice(0,1);
+            }
+            
+         }
+    }
+    
     // Gatherer ai
     if (this.unitType.name == "Gatherer") {
         
         // First, watch for enemies. If one found in same tile, return to base, unless already at base or going there
-        if (this.targetTile !== this.homeTile) {
+        if (this.targetReached && this.targetTile !== this.homeTile) {
             for (var i = 0; i < this.tile.units.length; i++) {
                 var unit = this.tile.units[i];
                 if (unit.owner !== this.owner) {
@@ -183,57 +243,7 @@ Unit.prototype.control = function() {
             }
 
         }
-        
-        // Move, if on route
-        if (!!! this.targetReached) {
-            this.x += this.xSpeed;
-            this.y += this.ySpeed;
-            
-            this.distance -= refreshRate * tileSize * (this.path[0].passability / 100) * this.unitType.speed;
-            
-            if (this.distance <= 0) {
-                this.targetReached = true;
-                
-                // Remove unit from previous tile and add to current tile
-                for (var i = 0; i < this.tile.units.length; i++) {
-                    if (this.tile.units[i] === this) {
-                        this.tile.units.splice[i,1];
-                        break;
-                    } 
-                }
-                
-                // Remove tile from path
-                if (this.path.length > 0) {
-                    
-                    // TODO: Could change current tile when crossing the tile line.
-                    this.path[0].units.push(this);
-                    this.tile = this.path[0];
-                    
-                    this.path.splice(0,1);
-                }
-                
-             }
-        }
-        
-        // Third, if target is set and not there but unit reached some tile, start moving towards target via route calculated
-        if (this.targetReached && this.targetTile && this.targetTile !== this.tile) {
-            var nextTile = this.path[0];
-            
-            // Get new target point in next square
-            var target = this.createRelativePoint(this.path[0]);
-            
-            this.xTarget = nextTile.x + target.x;
-            this.yTarget = nextTile.y + target.y;
-            
-            this.targetReached = false;
-            
-            var angle = Math.atan2(this.yTarget - this.y, this.xTarget - this.x);
-            this.xSpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.cos(angle);
-            this.ySpeed = refreshRate * tileSize * this.unitType.speed * (nextTile.passability / 100) * Math.sin(angle);
-            
-            this.distance = Math.sqrt(Math.pow(this.xTarget - this.x, 2) + Math.pow(this.yTarget - this.y, 2));
-        }
-        
+                        
         // Stop if at target
         if (this.targetReached && this.targetTile && this.targetTile === this.tile) {
             if (this.xSpeed > 0.0 || this.ySpeed > 0.0) {
@@ -245,14 +255,16 @@ Unit.prototype.control = function() {
             
             // If at target and needs to drop, drop
             if (this.tile.building && this.tile.building.buildingType.gatherShrooms && this.shrooms > 0.0) {
-                this.owner.shrooms += this.shrooms;
+                this.owner.shrooms += Math.floor(this.shrooms);
                 this.shrooms = 0;
                 this.targetTile = false;    // Get new target next time
+                this.actionTimer = 1.0;
             }
             if (this.tile.building && this.tile.building.buildingType.gatherBerries && this.berries > 0.0) {
-                this.owner.berries += this.berries;
+                this.owner.berries += Math.floor(this.berries);
                 this.berries = 0;
                 this.targetTile = false;    // Get new target next time
+                this.actionTimer = 1.0;
             }
                 
             // Fourth, if at target and needs to collect, collect
@@ -312,8 +324,125 @@ Unit.prototype.control = function() {
     
     // Attacker ai
     else {
+        // First, get nearest enemy if no target
+        if (!this.attackTarget) {
+            // Not exactly the best way to do this. TODO: fix this tuggummi
+            if (this.owner === playerAI) {
+                this.path = this.getPathToNearestTile(function(tile) {
+                                                                    for (var i = 0; i < tile.units.length; i++) {
+                                                                        var unit = tile.units[i];
+                                                                        if (unit.owner === playerLocal) return true;
+                                                                    }
+                                                                    return false;
+                                                                });
+            } else {
+                this.path = this.getPathToNearestTile(function(tile) {
+                                                                    for (var i = 0; i < tile.units.length; i++) {
+                                                                        var unit = tile.units[i];
+                                                                        if (unit.owner === playerAI) return true;
+                                                                    }
+                                                                    return false;
+                                                                });
+            }
+            if (this.path && this.path.length > 0) {
+                this.targetTile = this.path[this.path.length - 1];
+                // Get attack target from one of the units in target tile
+                for (var i = 0; i < this.targetTile.units.length; i++) {
+                    if (this.targetTile.units[i].owner !== this.owner) {
+                        this.attackTarget = this.targetTile.units[i];
+                        break;
+                    }
+                }
+            }
+            else {
+                // No enemies to be seen
+                if (this.homeTile && this.tile === this.homeTile) {
+                    // Wait a sec, the searh again
+                    this.attackTarget = false;
+                    this.actionTimer = 2.0;
+                } else {
+                    // If not at home, go home
+                    this.path = this.generatePathTo(this.homeTile);
+                    if (this.path && this.path.length > 0) { this.targetTile = this.path[this.path.length - 1]; this.attackTarget = this; }
+                }
+            }
+        }
         
+        // When moving, always go for target. Only do this check when targetReached.
+        if (this.targetReached
+            && this.attackTarget
+            && this.attackTarget.tile !== this.tile
+            && this.attackTarget.tile !== this.targetTile) {
+            
+            this.path = this.generatePathTo(this.attackTarget.tile);
+            if (this.path && this.path.length > 0) {
+                this.targetTile = this.path[this.path.length - 1];
+            }
+        }
+        
+        // Stop if at target
+        if (this.targetReached && this.targetTile && this.targetTile === this.tile) {
+            if (this.xSpeed > 0.0 || this.ySpeed > 0.0) {
+                this.xSpeed = 0.0;
+                this.ySpeed = 0.0;
+            }
+            
+            if (this.attackTarget && this.attackTarget.tile === this.tile) {
+                // Hit the target
+                this.attack(this.attackTarget);
+            }
+            
+            if (this.tile === this.homeTile) {
+                // Hang out at home for a sec
+                this.actionTimer = 2.0;
+            }
+        }
     }
+};
+
+Unit.prototype.attack = function(target) {
+    // Only attack when on same tile
+    if (this.tile !== target.tile)
+        return;
+        
+    var damage = this.unitType.attack - target.unitType.defence;
+    damage = Math.max(damage, 5);
+    
+    target.hp -= damage * refreshRate;
+    if (target.hp <= 0) {
+        target.destroy();
+        
+        // Nothing to target anymore
+        this.attackTarget = false;
+        this.targetTile = false;
+    }
+};
+
+Unit.prototype.destroy = function() {
+    this.exists = false;
+    
+    // Remove from all arrays
+    for (var i = 0; i < this.tile.units.length; i++) {
+        if (this.tile.units[i] === this) {
+            this.tile.units.splice(i, 1);
+            break;
+        }
+    }
+    for (var i = 0; i < map.units.length; i++) {
+        if (map.units[i] === this) {
+            map.units.splice(i, 1);
+            break;
+        }
+    }
+};
+
+// Pathfinding function fo get enemy tile
+Unit.prototype.tileHasPlayer = function(tile) {
+    for (var i = 0; i < tile.units.length; i++) {
+        var unit = tile.units[i];
+        if (unit.owner !== this.owner) return true;
+    }
+    return false;
 };
 
 // Pathfinding to target (A*)
@@ -329,7 +458,7 @@ Unit.prototype.generatePathTo = function(goal) {
     // Create an array of tiles
     for (var i = 0; i < map.grid.gridArray.length; i++) {
         if (map.grid.gridArray[i]) {
-            nodes.push(grid[i]);
+            nodes.push(map.grid.gridArray[i]);
             map.grid.gridArray[i].f_score = goal.distanceTo(map.grid.gridArray[i]);
             map.grid.gridArray[i].g_score = startTile.distanceTo(map.grid.gridArray[i]);
             map.grid.gridArray[i].previousTile = false;
@@ -338,14 +467,14 @@ Unit.prototype.generatePathTo = function(goal) {
     
     startTile.g_score = 0;
         
-    while (nodes.length > 0) {
+    while (open.length > 0) {
         var current = false;
         // Get node with lowest score
-        for (var i = 0; i < nodes.length; i++) {
+        for (var i = 0; i < open.length; i++) {
             if (!current) {
-                current = nodes[i];
-            } else if (current.f_score > nodes[i].f_score) {
-                current = nodes[i];
+                current = open[i];
+            } else if (current.f_score > open[i].f_score) {
+                current = open[i];
             }
         }
         // If target found, we're done here
@@ -353,9 +482,9 @@ Unit.prototype.generatePathTo = function(goal) {
             return this.reconstructPathTo(goal);
         }
         // Remove target from nodes
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i] === current) {
-                nodes.splice(i, 1);
+        for (var i = 0; i < open.length; i++) {
+            if (open[i] === current) {
+                open.splice(i, 1);
                 break;
             }
         }

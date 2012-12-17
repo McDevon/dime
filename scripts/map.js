@@ -67,6 +67,9 @@ Map.prototype.reset = function()
     
     // The first tile player gets to place is a bear cave
     this.tileToPlace = new Tile(tileTypes[5]);
+    if (this.tileToPlace.building) {
+        this.tileToPlace.building.owner = playerAI;
+    }
 };
 
 //Simple recursive random map generation for game start
@@ -177,6 +180,10 @@ Map.prototype.newTileToPlace = function() {
     
     // Tile type selected, set it
     this.tileToPlace = new Tile(tileTypes[i]);
+    
+    if (this.tileToPlace.building) {
+        this.tileToPlace.building.owner = playerAI;
+    }
     
 };
 

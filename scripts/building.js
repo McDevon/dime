@@ -90,6 +90,8 @@ Building.prototype.spawnUnits = function(amount) {
         // Give the unit a home
         if (this.owner && this.owner.homeTile) {
             unit.homeTile = this.owner.homeTile;
+        } else {
+            unit.homeTile = this.tile;
         }
         
         map.units.push(unit);
