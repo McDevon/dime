@@ -43,6 +43,11 @@ function Unit(unitType, owner)
     this.homeTile       = false;
     
     this.path           = false;    // Designated movement path
+    
+    // Seconds since the last time under attack.
+    // Let's start with an arbitrary big value in order to
+    // avoid specialized handling when no fighting has occurred yet.
+    this.fightTimer    = 10000.0;
 
     this.image          = new Image();
     this.image.src      = unitType.image;
@@ -53,6 +58,7 @@ function Unit(unitType, owner)
     
     // Constructor values
     this.hp             = unitType.hp;
+    this.totalHP        = unitType.hp;
     this.unitType       = unitType;
     this.owner          = owner;
 }
@@ -67,15 +73,9 @@ Unit.prototype.imageOnload = function() {
     m_context.drawImage(this.image, 0, 0);
     this.image = m_canvas;*/
 };
-Unit.prototype.draw = function(context, xOffset, yOffset) {
-    // Only draw if the image is on screen
-    if (this.x + this.width > xOffset
-        && this.y + this.height > yOffset
-        && this.x < xOffset + xCanvasSize
-        && this.y < yOffset + yCanvasSize) {
-        context.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
-    }
-};
+
+Unit.prototype.draw = objectDraw;
+
 Unit.prototype.setPosition = function(x, y) {
     // Given position is pixel position
     this.x  = x;
@@ -119,6 +119,8 @@ Unit.prototype.animate = function() {};
 // AI pass for object, also the moving happens here
 Unit.prototype.control = function() {
 
+    this.fightTimer += refreshRate;
+    
     // Sometimes we just wait
     if (this.actionTimer > 0.0) {
         this.actionTimer -= refreshRate;
@@ -418,6 +420,7 @@ Unit.prototype.attack = function(target) {
     damage = Math.max(damage, 5);
     
     target.hp -= damage * refreshRate;
+    target.fightTimer = 0.0;
     if (target.hp <= 0) {
         target.destroy();
         
