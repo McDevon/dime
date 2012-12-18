@@ -434,6 +434,9 @@ Unit.prototype.destroy = function() {
             break;
         }
     }
+    
+    // Play audio
+    audioEffects[2].play();
 };
 
 // Pathfinding function fo get enemy tile

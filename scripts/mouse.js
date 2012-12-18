@@ -88,6 +88,8 @@ document.getElementById("game").onmouseup = function(e) {
                 closeSelectionInfo();
                 // Done selecting, resume game
                 selecting = false;
+                // Audio effect too
+                audioEffects[0].play();
                 
             }
         }
