@@ -20,7 +20,7 @@ var gameTime    = 0.0;
 var roundTime   = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
-var roundLength = 30.0;     // How often player gets to place a tile (seconds)
+var roundLength = 3.0;     // How often player gets to place a tile (seconds)
 
 var playerLocal = false;
 var playerAI    = false;
@@ -32,11 +32,11 @@ var borders     = [false, false, false, false]; // Stoppers for left, up, right,
 
 // Audio effects
 var audioEffects = [
-    new AudioEffect("audio/place.mp3"),
-    new AudioEffect("audio/building.mp3"),
-    new AudioEffect("audio/vanish.mp3"),
-    new AudioEffect("audio/buildingDown.mp3"),
-    new AudioEffect("audio/bear.mp3"),
+    new AudioEffect("audio/place"),
+    new AudioEffect("audio/building"),
+    new AudioEffect("audio/vanish"),
+    new AudioEffect("audio/buildingDown"),
+    new AudioEffect("audio/bear"),
     ];
 
 // Different unit types
@@ -104,7 +104,7 @@ function resetGame() {
     yOffset     = (tileSize * yAreaSize) / 2 - (yCanvasSize / 2);
     borders     = [false, false, false, false];
     
-    playerLocal = new Player("player");
+    playerLocal = new Player("Player");
     playerAI    = new Player("AI");
     
     // Starting resources

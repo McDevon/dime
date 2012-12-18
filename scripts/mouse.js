@@ -102,12 +102,18 @@ document.getElementById("game").onmouseup = function(e) {
     }
 };
 
+document.getElementById("game").onselectstart = function(){ return false; }
+
 document.onmouseup = function(e) {
     clickedObject = null;
     mouseDown = false;
+    // Reset cursor
+    document.body.style.cursor = 'default';
 };
 
 document.onmousemove = function(e) {
+    //e.preventDefault();
+
     if (mouseRefresh) {
         var x = currentMouseXPosition(e) - currentCanvasXOffset();
         var y = currentMouseYPosition(e) - currentCanvasYOffset();
@@ -131,13 +137,18 @@ document.onmousemove = function(e) {
             if (!borders[0] && !borders[2]) {xMousePrevious = x;}
             if (!borders[1] && !borders[3]) {yMousePrevious = y;}
         
+            // Change cursor if not clicking
+            if (Math.abs(x - xMouseStart) < 5
+                && Math.abs(y - yMouseStart) < 5) {
+                document.body.style.cursor = 'move';
+            }
             //console.log("x off: " + xOffset + ", y off: " + yOffset);
         }
         
         // Get mouse position on game area
         xMouse = xOffset + x;
         yMouse = yOffset + y;
-        
+                
         mouseRefresh = false;
     }
 };
