@@ -148,12 +148,12 @@ Tile.prototype.displayInfo = function() {
         
         // Show spawnable unit(s)
         var unitData = "";
-        if (this.building.buildingType.spawnedUnit) {
+        if (this.building.buildingType.spawnedUnit && this.building.owner === playerLocal) {
             var unitType = this.building.buildingType.spawnedUnit;
             unitData += '<p><button onclick="buyUnit()"';
             if (playerLocal.berries < unitType.berryCost || playerLocal.shrooms < unitType.shroomCost)
                  unitData += ' disabled="disabled" ';
-            unitData += '>Buy</button>' + unitType.name + ', cost: ';
+            unitData += '>Buy</button><img src="' + unitType.image + '" /><span class="tile_info_value">' + unitType.name + '</span>, cost: ';
             if (unitType.berryCost > 0)
                 unitData += ' Berries: ' + unitType.berryCost;
             if (unitType.shroomCost > 0)
@@ -174,7 +174,7 @@ Tile.prototype.displayInfo = function() {
                 buildingList += '<p><button onclick="constructBuilding(\'' + buildingTypes[i].name + '\')"';
                 if (playerLocal.berries < buildingTypes[i].berryCost || playerLocal.shrooms < buildingTypes[i].shroomCost)
                      buildingList += ' disabled="disabled" ';
-                buildingList += '>Build</button>' + buildingTypes[i].name + ', cost: ';
+                buildingList += '>Build</button><span class="tile_info_value">' + buildingTypes[i].name + '</span>, cost: ';
                 if (buildingTypes[i].berryCost > 0)
                     buildingList += ' Berries: ' + buildingTypes[i].berryCost;
                 if (buildingTypes[i].shroomCost > 0)

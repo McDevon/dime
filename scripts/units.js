@@ -373,6 +373,13 @@ Unit.prototype.control = function() {
                 }
             }
         }
+        else { // this.attackTarget
+            if (!!!this.attackTarget.exists) {
+                this.attackTarget = false;
+                this.targetTile = this.tile;
+                this.targetReached = true;
+            }
+        }
         
         // When moving, always go for target. Only do this check when targetReached.
         if (this.targetReached
@@ -421,7 +428,9 @@ Unit.prototype.attack = function(target) {
         
         // Nothing to target anymore
         this.attackTarget = false;
-        this.targetTile = false;
+        this.targetTile = this.tile;
+        this.targetReached = true;
+        this.actionTimer = 1.0;
     }
 };
 
@@ -450,6 +459,8 @@ Unit.prototype.destroy = function() {
     
     // Play audio
     audioEffects[2].play();
+    
+    console.log("Unit destroyed: " + this.unitType.name);
 };
 
 // Pathfinding function fo get enemy tile

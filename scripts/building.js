@@ -90,6 +90,8 @@ Building.prototype.spawnUnits = function(amount) {
         
         unit.tile = this.tile;
         
+        this.tile.units.push(unit);
+        
         // Give the unit a home
         /*if (this.owner && this.owner.homeTile) {
             unit.homeTile = this.owner.homeTile;
@@ -147,6 +149,9 @@ function constructBuilding(building) {
         map.buildings.push(building);
         
         closeTileInfo();
+        
+        // Audio bling (should be moved to building finished)
+        audioEffects[1].play();
         
     }
 }
