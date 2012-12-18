@@ -419,6 +419,10 @@ Unit.prototype.attack = function(target) {
 };
 
 Unit.prototype.destroy = function() {
+    // Already destroyed
+    if (!!! this.exists)
+        return;
+        
     this.exists = false;
     
     // Remove from all arrays
