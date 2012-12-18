@@ -120,6 +120,7 @@ function mainLoop() {
     if (roundTime > roundLength && map.tileToPlace) {
         selecting = true;
         roundTime = 0;
+        map.tileToPlace.displaySelectionInfo();
     }
     
     // Recall mainLoop after refreshRate seconds

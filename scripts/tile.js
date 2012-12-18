@@ -132,6 +132,11 @@ Tile.prototype.neighbours = function() {
 };
 
 Tile.prototype.displayInfo = function() {
+    $("#tile_info").css({
+        position: "absolute",
+        left: (currentCanvasXOffset() + 50) + "px",
+        top: (currentCanvasYOffset() + 50) + "px"
+    })
     $("#tile_type").text(this.name);
     $("#building_info_frame").hide();
     $("#start_building").hide();
@@ -149,6 +154,20 @@ Tile.prototype.displayInfo = function() {
 
     $("#tile_info").show();
 
+};
+
+Tile.prototype.displaySelectionInfo = function() {
+    $("#selection_info").css({
+        position: "absolute",
+        left: (currentCanvasXOffset() + 10) + "px",
+        top: (currentCanvasYOffset() + 10) + "px"
+    })
+    $("#placed_tile_type").text(this.name);
+    $("#selection_info").show();
+};
+
+function closeSelectionInfo() {
+    $("#selection_info").hide();
 };
 
 function closeTileInfo() {

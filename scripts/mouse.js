@@ -83,8 +83,9 @@ document.getElementById("game").onmouseup = function(e) {
                 // Put tile to grid
                 map.tileToPlace.setPosition(map.grid, xTile, yTile);
                 // Generate new random tile to place next time
-                //map.tileToPlace = false;
                 map.newTileToPlace();
+                // Hide info text
+                closeSelectionInfo();
                 // Done selecting, resume game
                 selecting = false;
                 
