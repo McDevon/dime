@@ -22,6 +22,7 @@ function Building(buildingType, owner) {
     this.height         = tileSize / 2.0;
     this.tile           = false;
     this.spawnTimer     = 0.0;
+    this.defence        = 0;
 
     this.image          = new Image();
     this.image.src      = buildingType.image;

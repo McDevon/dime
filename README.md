@@ -20,6 +20,7 @@ Dime-kurssin projektityö
 - GUI esittämään pelaajan raha- yms. tilanteen
 - Uuden laatan sijoittaminen
 - Yksiköiden 'tekoäly' ja taistelu
+- Ääniefektit
 
 ## Todo
 
