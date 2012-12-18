@@ -18,11 +18,11 @@ Dime-kurssin projektityö
 - Yksiköiden resurssien keräys ja tuonti keräyspisteeseen
 - Gathererin tekoäly
 - GUI esittämään pelaajan raha- yms. tilanteen
+- Uuden laatan sijoittaminen
+- Yksiköiden 'tekoäly' ja taistelu
 
 ## Todo
 
-- Yksiköiden 'tekoäly' ja taistelu
-- Uuden laatan sijoittaminen
 - Rakennusten ostaminen ja rakentaminen (gathererit rakentavat rakennukset valmiiksi kuten AoE:ssa)
 - Yksiköiden ostaminen rakennuksista
 - Osittain rikkinäisen rakennuksen korjaaminen
