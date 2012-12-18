@@ -43,7 +43,7 @@ var audioEffects = [
 var unitTypes = [
     new UnitType("images/villager.png", "Gatherer", 50, 1, 10, 5, 20, 50, 0),
     new UnitType("images/bear.png", "Bear", 100, 0.5, 20, 5, 0, 200, 0),
-    new UnitType("images/soldier.png", "Soldier", 90, 0.7, 30, 10, 200, 50),
+    new UnitType("images/soldier.png", "Soldier", 90, 0.7, 30, 10, 0, 200, 50),
     ];
 
 // Different building types
@@ -58,7 +58,7 @@ var buildingTypes = [
 
 // Different tile areas
     //  TileType (image, name, buildable, passability, berries, shrooms, spawner, spawnerRate, incidence)
-    //  UnitType (name, hp, speed, attack, defence, berryCost, shroomCost)
+    //  UnitType (name, hp, speed, attack, defence, maxResources, berryCost, shroomCost)
     //  BuildingType (name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower, playerCanBuild, berryCost, shroomCost)
 var tileTypes = [
     new TileType("images/land2.png", "Grass", true, 100, 0, 0, false, 80),
@@ -110,8 +110,8 @@ function resetGame() {
     playerAI    = new Player("AI");
     
     // Starting resources
-    playerLocal.berries = 200;
-    playerLocal.shrooms = 600;
+    playerLocal.berries = 1000;
+    playerLocal.shrooms = 1000;
     
     // Build the map
     map.reset();
