@@ -367,7 +367,7 @@ Unit.prototype.control = function() {
                 } else {
                     // If not at home, go home
                     this.path = this.generatePathTo(this.homeTile);
-                    if (this.path && this.path.length > 0) { this.targetTile = this.path[this.path.length - 1]; this.attackTarget = this; }
+                    if (this.path && this.path.length > 0) { this.targetTile = this.path[this.path.length - 1]; this.attackTarget = false; }
                 }
             }
         }

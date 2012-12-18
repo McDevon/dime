@@ -145,6 +145,10 @@ Tile.prototype.displayInfo = function() {
     if (this.building) {
         $("#building_name").text(this.building.buildingType.name);
         $("#building_image").attr("src", this.building.image.src);
+
+        // Show building hp
+        var buildingData = '<p>Hp: ' + this.building.hp + ' / ' + this.building.totalHP + '</p>';
+        document.getElementById("building_data").innerHTML = buildingData;
         
         // Show spawnable unit(s)
         var unitData = "";
