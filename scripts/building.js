@@ -92,11 +92,11 @@ Building.prototype.spawnUnits = function(amount) {
         unit.tile = this.tile;
         
         // Give the unit a home
-        if (this.owner && this.owner.homeTile) {
+        /*if (this.owner && this.owner.homeTile) {
             unit.homeTile = this.owner.homeTile;
-        } else {
-            unit.homeTile = this.tile;
-        }
+        } else {*/
+        unit.homeTile = this.tile;
+        //}
         
         map.units.push(unit);
     }
@@ -132,9 +132,11 @@ function constructBuilding(building) {
         
         if (playerLocal.berries < type.berryCost || playerLocal.shrooms < type.shroomCost)
             return;
-            
-        playerLocal.berries -= type.berryCost;
-        playerLocal.shrooms -= type.shroomCost;
+        
+        if (type.berryCost > 0)
+            playerLocal.berries -= type.berryCost;
+        if (type.shroomCost > 0)
+            playerLocal.shrooms -= type.shroomCost;
         
         var building = new Building(type, playerLocal);
             

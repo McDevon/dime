@@ -145,6 +145,24 @@ Tile.prototype.displayInfo = function() {
     if (this.building) {
         $("#building_name").text(this.building.buildingType.name);
         $("#building_image").attr("src", this.building.image.src);
+        
+        // Show spawnable unit(s)
+        var unitData = "";
+        if (this.building.buildingType.spawnedUnit) {
+            var unitType = this.building.buildingType.spawnedUnit;
+            unitData += '<p><button onclick="buyUnit()"';
+            if (playerLocal.berries < unitType.berryCost || playerLocal.shrooms < unitType.shroomCost)
+                 unitData += ' disabled="disabled" ';
+            unitData += '>Buy</button>' + unitType.name + ', cost: ';
+            if (unitType.berryCost > 0)
+                unitData += ' Berries: ' + unitType.berryCost;
+            if (unitType.shroomCost > 0)
+                unitData += ' Mushrooms: ' + unitType.shroomCost;
+            unitData += '</p>';
+        }
+        
+        document.getElementById("buy_unit").innerHTML = unitData;
+        
         $("#building_info_frame").show();
     } else if (this.buildable) {
         $("#start_building").show();
@@ -165,7 +183,6 @@ Tile.prototype.displayInfo = function() {
             }
         }
         document.getElementById("construction_list").innerHTML = buildingList;
-        //$("#construction_list").text(buildingList);
     } else {
         $("#cannot_build").show();
     }

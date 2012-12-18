@@ -616,3 +616,25 @@ Unit.prototype.reconstructPathTo = function(goal) {
     return path.reverse();
 };
 
+function buyUnit() {
+    if (map.selectedTile
+        && map.selectedTile.building
+        && map.selectedTile.building.owner === playerLocal
+        && map.selectedTile.building.buildingType.spawnedUnit) {
+        var unitType = map.selectedTile.building.buildingType.spawnedUnit;
+        
+        if (playerLocal.berries < unitType.berryCost || playerLocal.shrooms < unitType.shroomCost)
+            return;
+            
+        if (unitType.berryCost > 0)
+            playerLocal.berries -= unitType.berryCost;
+        if (unitType.shroomCost > 0)
+            playerLocal.shrooms -= unitType.shroomCost;
+        
+        map.selectedTile.building.spawnUnits(1);
+        
+        // Refresh tile info
+        map.selectedTile.displayInfo();
+    }
+};
+
