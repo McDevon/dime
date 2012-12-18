@@ -61,6 +61,8 @@ function Unit(unitType, owner)
     this.totalHP        = unitType.hp;
     this.unitType       = unitType;
     this.owner          = owner;
+    
+    this.owner.unitAdded(this);
 }
 
 Unit.prototype.imageOnload = function() {
@@ -429,6 +431,8 @@ Unit.prototype.destroy = function() {
         return;
         
     this.exists = false;
+    
+    this.owner.unitDestroyed(this);
     
     // Remove from all arrays
     for (var i = 0; i < this.tile.units.length; i++) {

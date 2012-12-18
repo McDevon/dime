@@ -63,6 +63,7 @@ canvas {
     margin-top:         5px;
     margin-left:        10px;
     background-color:   #FFEAC2;
+    border:             1px solid #000000;
     display:            inline;
 }
 
@@ -72,7 +73,7 @@ canvas {
 	text-decoration:    underline;
 }
 
-#berry_count, #mushroom_count {
+#berry_count, #mushroom_count, #gatherer_count, #soldier_count {
 	font-weight:        bold;
 }
 

@@ -160,9 +160,7 @@ function draw() {
     drawBorders(m_context);
     drawCursor(m_context);
     
-    playerLocal.drawInfo(document.getElementById('player_name'),
-            document.getElementById('berry_count'),
-            document.getElementById('mushroom_count'));
+    playerLocal.drawInfo($("#player_name"), $("#berry_count"), $("#mushroom_count"), $("#gatherer_count"), $("#soldier_count"));
 
     // Move buffer to canvas
 	context.clearRect(0,0,xCanvasSize,yCanvasSize);
