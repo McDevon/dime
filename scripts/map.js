@@ -7,6 +7,8 @@ function Map() {
     
     // The tile player gets to place on map
     this.tileToPlace    = false;
+    // The tile player has selected for building
+    this.selectedTile   = false;
     
     /// The tiles forming the map
     this.grid = new Grid();
@@ -45,9 +47,9 @@ Map.prototype.reset = function()
 {
     // Create starting area with berries and mushrooms
     do {
-        this.grid    = new Grid();
-        this.buildings = [];
-        this.units   = [];
+        this.grid       = new Grid();
+        this.buildings  = [];
+        this.units      = [];
         berriesGenerated = false;
         shroomsGenerated = false;
         this.raiseLand(Math.floor(xAreaSize / 2), Math.floor(yAreaSize / 2), 100, true);

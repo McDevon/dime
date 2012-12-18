@@ -20,7 +20,7 @@ var gameTime    = 0.0;
 var roundTime   = 0.0;
 var selecting   = false;    // true when timer is paused and user is selecting place for next tile
 
-var roundLength = 3.0;     // How often player gets to place a tile (seconds)
+var roundLength = 30.0;     // How often player gets to place a tile (seconds)
 
 var playerLocal = false;
 var playerAI    = false;
@@ -41,23 +41,23 @@ var audioEffects = [
 
 // Different unit types
 var unitTypes = [
-    new UnitType("images/villager.png", "Gatherer", 50, 1, 10, 5, 20),
-    new UnitType("images/bear.png", "Bear", 100, 0.5, 20, 5, 0),
+    new UnitType("images/villager.png", "Gatherer", 50, 1, 10, 5, 20, 50, 0),
+    new UnitType("images/bear.png", "Bear", 100, 0.5, 20, 5, 0, 200, 0),
     ];
 
 // Different building types
 var buildingTypes = [
-    new BuildingType ("images/bearcave.png", "Bear cave", 2000, unitTypes[1], 0.1, 0, false, false, 0, 0),
-    new BuildingType ("images/tower.png", "Defence tower", 500, false, 0, 0, false, false, 1, 20),
-    new BuildingType ("images/towncenter.png", "Town hub", 5000, unitTypes[0], 0, 10, true, true, 2, 10),
-    new BuildingType ("images/berryhut.png", "Berry hut", 1000, false, 0, 0, true, false, 0, 0),
-    new BuildingType ("images/shroomhut.png", "Shroom basket", 1000, false, 0, 0, false, true, 0, 0),
+    new BuildingType ("images/bearcave.png", "Bear cave", 2000, unitTypes[1], 0.1, 0, false, false, 0, 0, false, 0, 0),
+    new BuildingType ("images/tower.png", "Defence tower", 500, false, 0, 0, false, false, 1, 20, true, 0, 500),
+    new BuildingType ("images/towncenter.png", "Town hub", 5000, unitTypes[0], 0, 10, true, true, 2, 10, false, 0, 0),
+    new BuildingType ("images/berryhut.png", "Berry hut", 1000, false, 0, 0, true, false, 0, 0, true, 0, 200),
+    new BuildingType ("images/shroomhut.png", "Shroom basket", 1000, false, 0, 0, false, true, 0, 0, true, 200, 0),
     ];
 
 // Different tile areas
     //  TileType (image, name, buildable, passability, berries, shrooms, spawner, spawnerRate, incidence)
-    //  UnitType (name, hp, speed, attack, defence)
-    //  BuildingType (name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower)
+    //  UnitType (name, hp, speed, attack, defence, berryCost, shroomCost)
+    //  BuildingType (name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower, playerCanBuild, berryCost, shroomCost)
 var tileTypes = [
     new TileType("images/land2.png", "Grass", true, 100, 0, 0, false, 80),
     new TileType("images/plains.png", "Plains", true, 90, 0, 0, false, 60),
@@ -109,7 +109,7 @@ function resetGame() {
     
     // Starting resources
     playerLocal.berries = 100;
-    playerLocal.shrooms = 100;
+    playerLocal.shrooms = 500;
     
     // Build the map
     map.reset();

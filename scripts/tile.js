@@ -44,7 +44,7 @@ function Tile(tileType)
     this.building       = false;
     
     if (tileType.buildingType) {
-        this.building       = new Building(tileType.buildingType, 0);
+        this.building       = new Building(tileType.buildingType, playerAI);
         this.building.tile  = this;
     }
     this.incidence      = tileType.incidence;
@@ -148,12 +148,32 @@ Tile.prototype.displayInfo = function() {
         $("#building_info_frame").show();
     } else if (this.buildable) {
         $("#start_building").show();
+        
+        // Create a list of buildable buildings
+        var buildingList = "";
+        for (var i = 0; i < buildingTypes.length; i++) {
+            if (buildingTypes[i].playerCanBuild) {
+                buildingList += '<p><button onclick="constructBuilding(\'' + buildingTypes[i].name + '\')"';
+                if (playerLocal.berries < buildingTypes[i].berryCost || playerLocal.shrooms < buildingTypes[i].shroomCost)
+                     buildingList += ' disabled="disabled" ';
+                buildingList += '>Build</button>' + buildingTypes[i].name + ', cost: ';
+                if (buildingTypes[i].berryCost > 0)
+                    buildingList += ' Berries: ' + buildingTypes[i].berryCost;
+                if (buildingTypes[i].shroomCost > 0)
+                    buildingList += ' Mushrooms: ' + buildingTypes[i].shroomCost;
+                buildingList += '</p>';
+            }
+        }
+        document.getElementById("construction_list").innerHTML = buildingList;
+        //$("#construction_list").text(buildingList);
     } else {
         $("#cannot_build").show();
     }
 
     $("#tile_info").show();
-
+    
+    // Select this tile
+    map.selectedTile = this;
 };
 
 Tile.prototype.displaySelectionInfo = function() {

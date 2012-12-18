@@ -1,4 +1,4 @@
-function UnitType(image, name, hp, speed, attack, defence, maxResources)
+function UnitType(image, name, hp, speed, attack, defence, maxResources, berryCost, shroomCost)
 {
     this.image      = image;
     this.name       = name;
@@ -7,6 +7,8 @@ function UnitType(image, name, hp, speed, attack, defence, maxResources)
     this.attack     = attack;
     this.defence    = defence;
     this.maxResources = maxResources;
+    this.berryCost  = berryCost;
+    this.shroomCost = shroomCost;
 }
 
 function Unit(unitType, owner)

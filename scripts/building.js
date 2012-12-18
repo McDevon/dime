@@ -1,5 +1,5 @@
 // Buildings are spawners, gathering points, shops, defence towers, etc..
-function BuildingType(image, name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower)
+function BuildingType(image, name, hp, spawnedUnit, spawningRate, spawningCost, gatherBerries, gatherShrooms, fireRate, firePower, playerCanBuild, berryCost, shroomCost)
 {
     this.image          = image;
     this.name           = name;
@@ -11,6 +11,9 @@ function BuildingType(image, name, hp, spawnedUnit, spawningRate, spawningCost, 
     this.gatherShrooms  = gatherShrooms;
     this.fireRate       = fireRate;
     this.firePower      = firePower;
+    this.playerCanBuild = playerCanBuild;
+    this.berryCost      = berryCost;
+    this.shroomCost     = shroomCost;
 }
 
 function Building(buildingType, owner) {
@@ -111,3 +114,37 @@ Building.prototype.control = function() {
         this.spawnTimer = 0;
     }
 };
+
+function constructBuilding(building) {
+    if (map.selectedTile
+        && map.selectedTile.building === false
+        && map.selectedTile.buildable === true) {
+        // Get building type
+        var type = false;
+        for (var i = 0; i < buildingTypes.length; i++) {
+            if (buildingTypes[i].name === building) {
+                type = buildingTypes[i];
+                break;
+            }
+        }
+        if (!!! type)
+            return;
+        
+        if (playerLocal.berries < type.berryCost || playerLocal.shrooms < type.shroomCost)
+            return;
+            
+        playerLocal.berries -= type.berryCost;
+        playerLocal.shrooms -= type.shroomCost;
+        
+        var building = new Building(type, playerLocal);
+            
+        map.selectedTile.building = building;
+        building.tile = map.selectedTile;
+        
+        building.setPosition(map.selectedTile.x, map.selectedTile.y);
+        map.buildings.push(building);
+        
+        closeTileInfo();
+        
+    }
+}
