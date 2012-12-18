@@ -27,25 +27,24 @@ function Building(buildingType, owner) {
     this.spawnTimer     = 0.0;
     this.defence        = 0;
 
+    // Seconds since the last time under attack.
+    // Let's start with an arbitrary big value in order to
+    // avoid specialized handling when no fighting has occurred yet.
+    this.fightTimer    = 10000.0;
+    
     this.image          = new Image();
     this.image.src      = buildingType.image;
     this.image.onload   = this.imageOnload;
     
     // Constructor values
     this.hp             = buildingType.hp;
+    this.totalHP        = buildingType.hp;
     this.buildingType   = buildingType;
     this.owner          = owner;
 }
 
-Building.prototype.draw = function(drawContext, xOffset, yOffset) {
-    // Only draw if the image is on screen
-    if (this.x + this.width > xOffset
-        && this.y + this.height > yOffset
-        && this.x < xOffset + xCanvasSize
-        && this.y < yOffset + yCanvasSize) {
-        drawContext.drawImage(this.image, this.x - xOffset, this.y - yOffset, this.width, this.height);
-    }
-};
+Building.prototype.draw = objectDraw;
+
 Building.prototype.setPosition = function(x, y) {
     // Given position is pixel position
     this.x  = x + tileSize / 4;
@@ -107,6 +106,7 @@ Building.prototype.animate = function() {};
 
 Building.prototype.control = function() {
     this.spawnTimer += refreshRate;
+    this.fightTimer += refreshRate;
     
     // Spawn units when it's time
     if (this.spawnTimer >= 1.0 / this.buildingType.spawningRate) {
