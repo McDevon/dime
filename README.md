@@ -21,15 +21,16 @@ Dime-kurssin projektityö
 - Uuden laatan sijoittaminen
 - Yksiköiden 'tekoäly' ja taistelu
 - Ääniefektit
+- Yksiköiden ostaminen rakennuksista
+- GUI esittämään tietoa valitusta laatasta
+    - Sekä ostamaan yksiköitä valitun laatan rakennuksesta
+- GUI rakennusten ostamista varten
 
 ## Todo
 
 - Rakennusten ostaminen ja rakentaminen (gathererit rakentavat rakennukset valmiiksi kuten AoE:ssa)
-- Yksiköiden ostaminen rakennuksista
 - Osittain rikkinäisen rakennuksen korjaaminen
-- GUI esittämään tietoa valitusta laatasta
-    - Sekä ostamaan yksiköitä valitun laatan rakennuksesta
-- GUI rakennusten ostamista varten
+- Puolustusrakennusten toiminta
 
 ## Synopsis
 
