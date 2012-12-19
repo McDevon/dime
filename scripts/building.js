@@ -26,6 +26,10 @@ function Building(buildingType, owner) {
     this.tile           = false;
     this.spawnTimer     = 0.0;
     this.defence        = 0;
+    
+    // Incremented by refreshRate each turn. When >= 1/fireRate, can fire.
+    // Reset when fired.
+    this.fireTimer      = 0.0;
 
     // Seconds since the last time under attack.
     // Let's start with an arbitrary big value in order to
@@ -115,6 +119,32 @@ Building.prototype.control = function() {
         this.spawnUnits(1);
         this.spawnTimer = 0;
     }
+    
+    // Buildings that can attack
+    if (this.buildingType.fireRate > 0) {
+        this.fireTimer += refreshRate;
+        
+        if (this.fireTimer >= 1.0 / this.buildingType.fireRate) {
+            var target = null;
+            
+            // target the first enemy in the same tile
+            for (var i = 0; i < this.tile.units.length; ++i) {
+                if (this.tile.units[i].owner !== this.owner) {
+                    target = this.tile.units[i];
+                    break;
+                }
+            }
+            
+            // can attack someone!
+            if (target) {
+                target.hp -= Math.max(this.buildingType.firePower - target.unitType.defence, 1);
+                target.fightTimer = 0.0;
+                if (target.hp <= 0) target.destroy();
+                this.fireTimer = 0.0;
+            }
+        }
+    }
+    
 };
 
 function constructBuilding(building) {

@@ -460,7 +460,6 @@ Unit.prototype.destroy = function() {
     // Play audio
     audioEffects[2].play();
     
-    console.log("Unit destroyed: " + this.unitType.name);
 };
 
 // Pathfinding function fo get enemy tile
