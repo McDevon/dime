@@ -98,10 +98,14 @@ function loadAudio() {
 // Reset canvas area
 function resetGame() {
 	context.clearRect(0,0,xCanvasSize,yCanvasSize);
+	
+	$("#tile_info").hide();
+	$("#selection_info").hide();
     
     // Reset game state
     gameTime    = 0.0;
     roundTime   = 0.0;
+    selecting   = false;
     xOffset     = (tileSize * xAreaSize) / 2 - (xCanvasSize / 2);
     yOffset     = (tileSize * yAreaSize) / 2 - (yCanvasSize / 2);
     borders     = [false, false, false, false];
