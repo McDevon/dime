@@ -102,7 +102,7 @@ document.getElementById("game").onmouseup = function(e) {
     }
 };
 
-document.getElementById("game").onselectstart = function(){ return false; }
+document.getElementById("game").onselectstart = function(){ return false; };
 
 document.onmouseup = function(e) {
     clickedObject = null;

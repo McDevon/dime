@@ -479,7 +479,6 @@ Unit.prototype.generatePathTo = function(goal) {
 
     var closed  = [];
     var open    = [startTile];
-    var startIndex;
     var nodes = [];
     
     // Create an array of tiles

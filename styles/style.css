@@ -73,7 +73,7 @@ canvas {
 	text-decoration:    underline;
 }
 
-#berry_count, #mushroom_count, #gatherer_count, #soldier_count {
+#berry_count, #mushroom_count, #gatherer_count, #soldier_count, #tile_resource_count {
 	font-weight:        bold;
 }
 
@@ -103,16 +103,8 @@ canvas {
 	margin-top:         5px;
 }
 
-#start_building {
+#start_building, #cannot_build, #tile_resource_info {
 	display:            none;
-}
-
-#cannot_build {
-	display:            none;
-}
-
-#building_info {
-
 }
 
 #selection_info {

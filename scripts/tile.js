@@ -136,11 +136,12 @@ Tile.prototype.displayInfo = function() {
         position: "absolute",
         left: (currentCanvasXOffset() + 50) + "px",
         top: (currentCanvasYOffset() + 50) + "px"
-    })
+    });
     $("#tile_type").text(this.name);
     $("#building_info_frame").hide();
     $("#start_building").hide();
     $("#cannot_build").hide();
+    $("#tile_resource_info").hide();
 
     if (this.building) {
         $("#building_name").text(this.building.buildingType.name);
@@ -190,6 +191,17 @@ Tile.prototype.displayInfo = function() {
     } else {
         $("#cannot_build").show();
     }
+    
+    if (this.berries > 0 || this.shrooms > 0) {
+        if (this.berries > 0) {
+            $("#tile_resource_type").text("Berries");
+            $("#tile_resource_count").text(Math.floor(this.berries));
+        } else {
+            $("#tile_resource_type").text("Mushrooms");
+            $("#tile_resource_count").text(Math.floor(this.shrooms));
+        }
+        $("#tile_resource_info").show();
+    }
 
     $("#tile_info").show();
     
@@ -202,7 +214,7 @@ Tile.prototype.displaySelectionInfo = function() {
         position: "absolute",
         left: (currentCanvasXOffset() + 10) + "px",
         top: (currentCanvasYOffset() + 10) + "px"
-    })
+    });
     $("#placed_tile_type").text(this.name);
     $("#selection_info").show();
 };
